@@ -1,0 +1,137 @@
+<h3>Политика обработки персональных данных</h3>
+
+          <p>
+            <strong>Редакция от 30.04.2026.</strong>
+            Настоящая политика определяет порядок обработки персональных данных
+            Индивидуальным предпринимателем Гуриновичем Гордеем Валерьевичем,
+            ИНН 110211660372, ОГРНИП 326330000031166, далее — «Оператор».
+          </p>
+
+          <h4>1. Какие данные обрабатываются</h4>
+          <p>
+            Оператор может обрабатывать: имя родителя или ученика, номер телефона,
+            email, Telegram-аккаунт, класс, предмет, цель обучения, комментарии из заявки,
+            сведения об оплате и иную информацию, которую пользователь добровольно передаёт через сайт,
+            мессенджеры или иные каналы связи.
+          </p>
+
+          <h4>2. Цели обработки</h4>
+          <ul>
+            <li>обработка заявки и связь с пользователем;</li>
+            <li>проведение бесплатной диагностики;</li>
+            <li>подбор преподавателя и организация обучения;</li>
+            <li>согласование расписания и сопровождение занятий;</li>
+            <li>приём оплаты, направление электронных чеков и оформление возвратов;</li>
+            <li>исполнение требований законодательства Российской Федерации.</li>
+          </ul>
+
+          <h4>3. Правовые основания обработки</h4>
+          <p>
+            Обработка осуществляется на основании согласия пользователя,
+            необходимости исполнения договора/оферты, а также требований законодательства Российской Федерации.
+          </p>
+
+          <h4>4. Передача данных третьим лицам</h4>
+          <p>
+            Данные могут передаваться преподавателям-партнёрам для организации занятий,
+            платёжным и кассовым сервисам для приёма оплаты и формирования чеков,
+            а также иным лицам, если это необходимо для исполнения обязательств или требуется законом.
+          </p>
+
+          <h4>5. Хранение и защита данных</h4>
+          <p>
+            Оператор принимает разумные организационные и технические меры для защиты персональных данных
+            от неправомерного доступа, изменения, распространения или уничтожения.
+          </p>
+
+          <h4>6. Права пользователя</h4>
+          <p>
+            Пользователь вправе запросить информацию об обработке своих персональных данных,
+            потребовать уточнения, блокирования или удаления данных, а также отозвать согласие на обработку,
+            направив обращение на email team@redline-shool.ru или в Telegram @managerRL.
+          </p>
+
+          <h4>7. Срок обработки данных</h4>
+          <p>
+            Персональные данные обрабатываются до достижения целей обработки,
+            отзыва согласия пользователем или наступления иных оснований прекращения обработки,
+            предусмотренных законодательством Российской Федерации.
+          </p>
+
+          <h4>8. Контакты оператора</h4>
+          <p>
+            ИП Гуринович Гордей Валерьевич. ИНН 110211660372. ОГРНИП 326330000031166.
+            Email: team@redline-shool.ru. Telegram: @managerRL.
+          </p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer" id="contacts">
+    <div class="container footer-grid">
+      <div>
+        <h3>RED LINE</h3>
+        <p style="margin-top: 10px;">
+          Онлайн-занятия с преподавателями-партнёрами.
+          Подбор, расписание, оплата и сопровождение обучения.
+        </p>
+        <p style="margin-top: 16px;">
+          ИП Гуринович Гордей Валерьевич<br />
+          ИНН 110211660372<br />
+          ОГРНИП 326330000031166
+        </p>
+      </div>
+
+      <div class="footer-links">
+        <a href="mailto:team@redline-shool.ru">team@redline-shool.ru</a>
+        <a href="https://t.me/managerRL" target="_blank" rel="noopener">@managerRL</a>
+        <a href="#offer">Публичная оферта</a>
+        <a href="#privacy">Политика обработки персональных данных</a>
+        <a href="#pricing">Стоимость занятий</a>
+      </div>
+    </div>
+
+    <div class="container" style="margin-top: 26px;">
+      <p>© <span id="year"></span> RED LINE. Все права защищены.</p>
+    </div>
+    </footer>
+
+  <a href="#diag" class="btn mobile-cta">Записаться на диагностику</a>
+
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+
+    const form = document.getElementById("leadForm");
+    const formMessage = document.getElementById("formMessage");
+
+    form.addEventListener("submit", function (event) {
+      event.preventDefault();
+
+      formMessage.classList.add("success");
+      formMessage.style.display = "block";
+      formMessage.textContent = "Заявка отправлена. Мы свяжемся с вами в ближайшее время.";
+
+      const name = document.getElementById("name").value.trim();
+      const phone = document.getElementById("phone").value.trim();
+      const grade = document.getElementById("grade").value.trim();
+      const subject = document.getElementById("subject").value.trim();
+      const comment = document.getElementById("comment").value.trim();
+
+      const text =
+        "Новая заявка RED LINE:%0A" +
+        "Имя: " + encodeURIComponent(name) + "%0A" +
+        "Контакт: " + encodeURIComponent(phone) + "%0A" +
+        "Класс: " + encodeURIComponent(grade) + "%0A" +
+        "Предмет: " + encodeURIComponent(subject) + "%0A" +
+        "Комментарий: " + encodeURIComponent(comment);
+
+      setTimeout(function () {
+        window.open("https://t.me/managerRL?text=" + text, "_blank");
+      }, 500);
+
+      form.reset();
+    });
+  </script>
+</body>
+</html>
