@@ -337,11 +337,10 @@
     const CLOUDPAYMENTS_PUBLIC_ID = "pk_12b05b775c46d16cdcfc19ca64510";
 
     // Редактировать доступные суммы оплаты здесь.
-    const paymentAmounts = [10];
-
-    for (let amount = 800; amount <= 5000; amount += 100) {
-      paymentAmounts.push(amount);
-    }
+    const paymentAmounts = [
+      10,
+      ...Array.from({ length: 43 }, (_, index) => 800 + index * 100)
+    ];
 
     const paymentLinksByAmount = {
       10: "https://c.cloudpayments.ru/payments/d29faa11525145f6aff9b08ece74f56f",
