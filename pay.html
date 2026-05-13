@@ -440,6 +440,7 @@
         `Репетитор: ${tutorName}`,
         `Комментарий: ${comment || "Без комментария"}`
       ].join("; ");
+      const paymentRegistryComment = receiptCustomerInfo;
 
       const receipt = {
         Items: [
@@ -481,7 +482,8 @@
         student_name: studentName,
         subject: subject,
         tutor_name: tutorName,
-        comment: comment || "Без комментария",
+        comment: paymentRegistryComment,
+        lesson_comment: comment || "Без комментария",
         source: "redline_payment_page",
         name: parentName,
         phone: parentPhone,
