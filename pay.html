@@ -440,7 +440,6 @@
         `Репетитор: ${tutorName}`,
         `Комментарий: ${comment || "Без комментария"}`
       ].join("; ");
-      const paymentRegistryComment = receiptCustomerInfo;
 
       const receipt = {
         Items: [
@@ -470,20 +469,18 @@
       };
 
       const paymentData = {
+        parent_name: parentName,
+        student_name: studentName,
+        subject: subject,
+        tutor_name: tutorName,
+        comment: comment,
+        parent_phone: parentPhone,
+        parent_email: parentEmail,
         order_id: orderId,
         invoice_id: orderId,
         amount: selectedAmount,
         account_id: payerId,
         payer_id: payerId,
-
-        parent_phone: parentPhone,
-        parent_email: parentEmail,
-        parent_name: parentName,
-        student_name: studentName,
-        subject: subject,
-        tutor_name: tutorName,
-        comment: paymentRegistryComment,
-        lesson_comment: comment || "Без комментария",
         source: "redline_payment_page",
         name: parentName,
         phone: parentPhone,
