@@ -900,6 +900,49 @@ summary::-webkit-details-marker{display:none;}
   .price-note{margin-top:14px;padding:14px;border-radius:1rem;background:rgba(227,30,36,.08);border:1px solid rgba(227,30,36,.14);font-weight:900;color:#171717;}
   @media (max-width: 900px){.legal-grid{grid-template-columns:1fr;}.doc-block{max-height:none;}}
 
+  .albato-test-panel{
+    position:fixed;
+    right:18px;
+    bottom:18px;
+    z-index:1000;
+    width:min(420px, calc(100vw - 24px));
+    padding:18px;
+    border-radius:18px;
+    background:#fff;
+    border:1.5px solid rgba(227,30,36,.28);
+    box-shadow:0 18px 50px rgba(166,31,36,.18);
+    color:#171717;
+  }
+  .albato-test-panel h3{
+    margin:0 0 8px;
+    font-size:18px;
+    font-weight:900;
+    color:#171717;
+  }
+  .albato-test-panel p{
+    margin:0 0 12px;
+    color:rgba(23,23,23,.70);
+    font-weight:700;
+    line-height:1.45;
+    font-size:14px;
+  }
+  .albato-test-panel button{
+    width:100%;
+  }
+  .albato-test-result{
+    margin-top:10px;
+    font-weight:900;
+    font-size:13px;
+  }
+  @media (max-width: 640px){
+    .albato-test-panel{
+      left:12px;
+      right:12px;
+      bottom:12px;
+      width:auto;
+    }
+  }
+
 </style>
 </head>
 <body class="text-white">
@@ -1803,6 +1846,104 @@ summary::-webkit-details-marker{display:none;}
     }, { threshold: 0.3 });
 
     observer.observe(chartSection);
+
+    // Albato webhook tester. Visible only when URL contains ?testWebhook=1
+    const ALBATO_WEBHOOK_URL = "https://h.albato.ru/wh/38/1lfdcmv/uRuIO1h7EysVOQgN2cvjzUXqL4OJCDTR-_lYxkWQyGw/";
+
+    initAlbatoWebhookTester();
+
+    function initAlbatoWebhookTester() {
+      const params = new URLSearchParams(window.location.search);
+      if (!params.has("testWebhook")) return;
+
+      const panel = document.createElement("div");
+      panel.className = "albato-test-panel";
+      panel.innerHTML = `
+        <h3>Тест Albato webhook</h3>
+        <p>Эта панель видна только с параметром <strong>?testWebhook=1</strong>. Нажмите кнопку, чтобы Albato получил образец полей для Google Sheets.</p>
+        <button class="btn btn-pay" type="button" id="sendAlbatoIndexTest">Отправить тестовый webhook</button>
+        <div class="albato-test-result" id="albatoIndexTestResult"></div>
+      `;
+      document.body.appendChild(panel);
+
+      document.getElementById("sendAlbatoIndexTest").addEventListener("click", async () => {
+        const result = document.getElementById("albatoIndexTestResult");
+        const button = document.getElementById("sendAlbatoIndexTest");
+        const now = new Date();
+        const orderId = `INDEX-TEST-${createAlbatoTestOrderId(now)}`;
+        const payload = {
+          parent_name: "Тестовый родитель",
+          student_name: "Тестовый ученик",
+          subject: "Математика",
+          tutor_name: "Тестовый репетитор",
+          comment: "Тестовая отправка с index.html без оплаты",
+          parent_phone: "+79990000000",
+          parent_email: "test@example.com",
+          order_id: orderId,
+          invoice_id: orderId,
+          amount: 10,
+          account_id: "+79990000000",
+          payer_id: "+79990000000",
+          source: "redline_index_test_panel",
+          status: "test_paid",
+          transaction_id: `INDEX-${now.getTime()}`,
+          paid_at: now.toISOString()
+        };
+
+        button.disabled = true;
+        result.textContent = "Отправляем...";
+
+        const sent = await sendAlbatoWebhook(payload);
+        result.textContent = sent
+          ? `Готово: Albato ответил 200 OK. invoice_id: ${orderId}`
+          : "Не получилось отправить. Откройте DevTools -> Console/Network.";
+        button.disabled = false;
+      });
+    }
+
+    function createAlbatoTestOrderId(date) {
+      const pad = (value) => String(value).padStart(2, "0");
+      return [
+        date.getFullYear(),
+        pad(date.getMonth() + 1),
+        pad(date.getDate()),
+        pad(date.getHours()),
+        pad(date.getMinutes()),
+        pad(date.getSeconds())
+      ].join("");
+    }
+
+    function sendAlbatoWebhook(payload) {
+      const body = new URLSearchParams(payload).toString();
+      localStorage.setItem("redline_last_albato_payload", JSON.stringify(payload));
+      console.log("Albato test payload:", payload);
+
+      return fetch(ALBATO_WEBHOOK_URL, {
+        method: "POST",
+        mode: "cors",
+        keepalive: true,
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8"
+        },
+        body
+      }).then((response) => {
+        console.log("Albato test response:", response.status, response.statusText);
+        return response.ok;
+      }).catch((error) => {
+        console.warn("Albato test error:", error);
+
+        if (navigator.sendBeacon) {
+          const blob = new Blob([body], {
+            type: "application/x-www-form-urlencoded;charset=UTF-8"
+          });
+          const sent = navigator.sendBeacon(ALBATO_WEBHOOK_URL, blob);
+          console.log("Albato test beacon fallback:", sent);
+          return sent;
+        }
+
+        return false;
+      });
+    }
   </script>
 
 
