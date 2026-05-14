@@ -1,678 +1,1808 @@
-<!doctype html>
-<html lang="ru">
-<head>
-  <meta charset="utf-8">
-  <meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport">
-  <title>Оплата занятия — RED LINE</title>
-  <style>
-    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-    :root{
-      --bg:#fff8f3;
-      --panel:#ffffff;
-      --panel-soft:#fff3ee;
-      --text:#171717;
-      --muted:rgba(23,23,23,.68);
-      --line:rgba(227,30,36,.16);
-      --red:#e31e24;
-      --red-dark:#b71c1c;
-      --green:#22c55e;
-      --cream:#fffaf6;
-    }
+<html lang="ru"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport">
+<title>RED LINE — ВПР, ОГЭ, ЕГЭ и повышение успеваемости — refresh</title>
+<style>
+    *{ -webkit-tap-highlight-color:transparent; box-sizing:border-box; }
+    html{ scroll-behavior:smooth; }
     body{
-      margin:0;
       font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
-      color:var(--text);
-      background:
-        radial-gradient(ellipse 70% 45% at 50% -10%, rgba(227,30,36,.12), transparent),
-        radial-gradient(ellipse 45% 35% at 100% 0%, rgba(255,126,95,.16), transparent),
-        var(--bg);
-      min-height:100vh;
-      overflow-x:hidden;
+      color:#0A0A0F; overflow-x:hidden;
+      background: #0A0A0F;
     }
-    a{color:inherit;text-decoration:none}
-    h1,h2,h3{font-family:Montserrat,Inter,system-ui,sans-serif;letter-spacing:-.03em}
-    .nav{
-      position:sticky;
-      top:0;
-      z-index:10;
-      background:rgba(255,250,246,.94);
-      border-bottom:1px solid var(--line);
-      backdrop-filter:blur(16px);
-      -webkit-backdrop-filter:blur(16px);
+    h1,h2,h3{ font-family:Montserrat,system-ui,sans-serif; letter-spacing:-.03em; }
+    
+    .glass-dark{
+      background:rgba(26,26,26,.95);
+      backdrop-filter:blur(18px); -webkit-backdrop-filter:blur(18px);
+      border:1px solid rgba(227,30,36,.2);
+      box-shadow:0 14px 40px rgba(0,0,0,.5);
+      border-radius:1.75rem;
     }
-    .wrap{width:min(1120px,100%);margin:0 auto;padding:0 16px}
-    .nav-inner{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px 0}
-    .brand{display:flex;align-items:center;gap:12px;min-width:0}
-    .logo{
-      width:48px;
-      height:48px;
-      border-radius:14px;
-      background:#fff;
-      border:1px solid var(--line);
+    
+    .btn{
+      display:inline-flex; align-items:center; justify-content:center; gap:.7rem;
+      font-weight:900; text-transform:uppercase; letter-spacing:1.6px;
+      border-radius:1.15rem; padding:18px 28px; color:#fff;
+      background:linear-gradient(135deg,#E31E24 0%,#B71C1C 50%,#E31E24 100%);
+      box-shadow:0 18px 60px rgba(227,30,36,.35);
+      transition:transform .2s ease, box-shadow .2s ease;
+      user-select:none;
+      cursor: pointer;
+      border: none;
+    }
+    .btn:hover{ transform:translateY(-3px) scale(1.01); box-shadow:0 28px 80px rgba(227,30,36,.55); }
+    .btn:active{ transform:translateY(-1px) scale(1); }
+    .btn:disabled{ opacity: 0.6; cursor: not-allowed; transform: none; }
+
+    .btn-telegram{
+      display:inline-flex; align-items:center; justify-content:center; gap:.7rem;
+      font-weight:900; text-transform:uppercase; letter-spacing:1.6px;
+      border-radius:1.15rem; padding:16px 24px; color:#fff;
+      background:linear-gradient(135deg,#0088cc 0%,#229ED9 50%,#0088cc 100%);
+      box-shadow:0 10px 30px rgba(0,136,204,0.35);
+      transition:transform .2s ease, box-shadow .2s ease;
+      text-decoration: none;
+    }
+    .btn-telegram:hover{ transform:translateY(-2px) scale(1.01); box-shadow:0 16px 40px rgba(0,136,204,0.5); }
+    
+
+    .btn,.btn-telegram{max-width:100%; text-align:center; white-space:normal; box-sizing:border-box;}
+    .btn span,.btn-telegram span{display:inline-block;}
+    .icon-list,.price-list,.arrow-list{list-style:none; margin:0; padding:0;}
+    .icon-list li,
+    .price-list li,
+    .arrow-list li{
+      display:grid;
+      grid-template-columns:20px minmax(0,1fr);
+      column-gap:12px;
+      align-items:start;
+    }
+    .icon-list li > span:first-child,
+    .price-list li > span:first-child,
+    .arrow-list li > span:first-child{
+      width:20px;
+      min-width:20px;
       display:flex;
       align-items:center;
       justify-content:center;
-      overflow:hidden;
-      flex:0 0 auto;
+      line-height:1;
+      margin-top:2px;
+      flex-shrink:0;
     }
-    .logo img{width:100%;height:100%;object-fit:contain}
-    .brand-title{font-weight:950;font-size:16px;line-height:1.05}
-    .brand-subtitle{margin-top:4px;color:var(--red);font-size:11px;font-weight:800}
-    .nav-links{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end}
-    .nav-link{font-size:13px;font-weight:800;color:rgba(23,23,23,.68);padding:10px 12px;border-radius:12px}
-    .nav-link:hover{background:rgba(227,30,36,.08);color:#171717}
-    .btn{
-      display:inline-flex;
+
+    .chip{
+      display:inline-flex; align-items:center; gap:.55rem;
+      padding:10px 14px; border-radius:999px;
+      border:1px solid rgba(227,30,36,.4);
+      background:rgba(227,30,36,.15);
+      box-shadow:0 10px 30px rgba(0,0,0,.3);
+      font-weight:800; font-size:12px; text-transform:uppercase; letter-spacing:1px;
+      color: #E31E24;
+    }
+    
+    .navblur{
+      background:rgba(10,10,15,.95);
+      backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px);
+      border-bottom:1px solid rgba(227,30,36,.2);
+    }
+    
+    .mobbar{
+      position:fixed; left:0; right:0; bottom:0; z-index:60;
+      padding:12px 12px calc(12px + env(safe-area-inset-bottom));
+      background:rgba(10,10,15,.98);
+      backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px);
+      border-top:1px solid rgba(227,30,36,.3);
+      display:none;
+    }
+    @media (max-width: 768px){ .mobbar{ display:block; } }
+    
+    .highlight-bg{
+      background: rgba(227,30,36,.2);
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+    
+    .hero-gradient{
+      background: 
+        radial-gradient(ellipse 80% 50% at 50% -20%, rgba(227,30,36,.2), transparent),
+        radial-gradient(ellipse 60% 40% at 90% 80%, rgba(255,255,255,.05), transparent),
+        #0A0A0F;
+    }
+    
+    .glow-red {
+      box-shadow: 0 0 60px rgba(227,30,36,.3), 0 0 100px rgba(227,30,36,.1);
+    }
+    
+    .pricing-card {
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .pricing-card:hover {
+      transform: translateY(-8px);
+    }
+    .pricing-card.featured:hover {
+      box-shadow: 0 30px 80px rgba(227,30,36,.3);
+    }
+
+    /* Chart styles */
+    .chart-wrapper {
+      background: linear-gradient(180deg, rgba(20,20,20,.9) 0%, rgba(15,15,15,.95) 100%);
+      border-radius: 1.5rem;
+      padding: 24px;
+      border: 1px solid rgba(255,255,255,.08);
+    }
+
+    @keyframes drawLine {
+      from { stroke-dashoffset: 1000; }
+      to { stroke-dashoffset: 0; }
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    
+    .chart-line {
+      stroke-dasharray: 1000;
+      stroke-dashoffset: 1000;
+      animation: drawLine 2s ease-out forwards;
+    }
+    
+    .chart-point {
+      opacity: 0;
+      animation: fadeIn 0.4s ease-out forwards;
+    }
+    
+    .chart-area {
+      opacity: 0;
+      animation: fadeIn 1s ease-out forwards;
+      animation-delay: 1s;
+    }
+
+    /* Form messages */
+    .form-message {
+      padding: 16px;
+      border-radius: 12px;
+      margin-top: 16px;
+      font-weight: 600;
+      text-align: center;
+    }
+    .form-success {
+      background: rgba(34, 197, 94, 0.2);
+      border: 1px solid rgba(34, 197, 94, 0.3);
+      color: #22c55e;
+    }
+    .form-error {
+      background: rgba(227, 30, 36, 0.2);
+      border: 1px solid rgba(227, 30, 36, 0.3);
+      color: #ef4444;
+    }
+    }
+
+    /* Floating decorations */
+    @keyframes float {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-15px) rotate(3deg); }
+    }
+    .float-element {
+      animation: float 4s ease-in-out infinite;
+    }
+    .float-element:nth-child(2n) {
+      animation-delay: -1s;
+    }
+    .float-element:nth-child(3n) {
+      animation-delay: -2s;
+    }
+
+    /* Review placeholders */
+    .review-placeholder {
+      background: linear-gradient(145deg, rgba(40,40,40,0.8) 0%, rgba(25,25,25,0.9) 100%);
+      border: 2px dashed rgba(255,255,255,0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 10px;
+      color: rgba(255,255,255,0.4);
+      font-size: 14px;
+      transition: all 0.3s ease;
+    }
+    .review-placeholder:hover {
+      border-color: rgba(227,30,36,0.4);
+      background: linear-gradient(145deg, rgba(50,40,40,0.8) 0%, rgba(35,25,25,0.9) 100%);
+    }
+
+    /* Video placeholder */
+    .video-placeholder {
+      position: relative;
+      overflow: hidden;
+    }
+    .video-placeholder::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(227,30,36,0.1) 0%, transparent 100%);
+    }
+    .play-icon {
+      width: 60px;
+      height: 60px;
+      background: linear-gradient(135deg, #E31E24 0%, #B71C1C 100%);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 10px 30px rgba(227,30,36,0.4);
+      transition: transform 0.3s ease;
+    }
+    .video-placeholder:hover .play-icon {
+      transform: scale(1.1);
+    }
+
+    .step-badge {
+      width: 32px;
+      height: 32px;
+      min-width: 32px;
+      min-height: 32px;
+      border-radius: 9999px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 15px;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+    .step-text {
+      min-width: 0;
+    }
+    .step-card{
+      display:flex;
+      align-items:center;
+      gap:14px;
+      padding:14px 16px;
+      border-radius:1rem;
+      background:rgba(255,255,255,.04);
+      border:1px solid rgba(255,255,255,.08);
+    }
+    .step-card.active{
+      background:rgba(227,30,36,.10);
+      border-color:rgba(227,30,36,.28);
+    }
+    .step-badge.soft{
+      background:linear-gradient(135deg, rgba(227,30,36,.22), rgba(227,30,36,.10));
+      color:#ff4d4f;
+      box-shadow:inset 0 0 0 1px rgba(227,30,36,.18);
+    }
+    .step-badge.solid{
+      background:linear-gradient(135deg,#E31E24,#b71c1c);
+      color:#fff;
+      box-shadow:0 10px 24px rgba(227,30,36,.28);
+    }
+    .mini-icon{
+      width:42px;
+      height:42px;
+      min-width:42px;
+      border-radius:14px;
+      display:flex;
       align-items:center;
       justify-content:center;
-      gap:8px;
-      border:0;
-      border-radius:18px;
-      padding:16px 22px;
-      color:#fff;
-      background:linear-gradient(135deg,var(--red) 0%,var(--red-dark) 52%,var(--red) 100%);
-      box-shadow:0 18px 54px rgba(227,30,36,.34);
-      font-weight:950;
-      text-transform:uppercase;
-      letter-spacing:1px;
-      cursor:pointer;
-      transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease;
-      text-align:center;
-      min-height:52px;
+      background:linear-gradient(135deg, rgba(227,30,36,.18), rgba(227,30,36,.06));
+      border:1px solid rgba(227,30,36,.24);
+      box-shadow:0 10px 30px rgba(227,30,36,.12);
     }
-    .btn:hover{transform:translateY(-2px);box-shadow:0 24px 70px rgba(227,30,36,.5)}
-    .btn:disabled{opacity:.58;cursor:not-allowed;transform:none}
-    .btn-pay{
-      background:linear-gradient(135deg,#ff2b2b 0%,#e31e24 45%,#8f1115 100%);
-      box-shadow:0 22px 64px rgba(227,30,36,.42),0 0 0 4px rgba(227,30,36,.08);
-      border:1px solid rgba(255,255,255,.55);
+    .diag-steps{
+      list-style:none;
+      margin:16px 0 0;
+      padding:0;
+      display:flex;
+      flex-direction:column;
+      gap:14px;
     }
-    .btn-pay:hover{box-shadow:0 30px 82px rgba(227,30,36,.56),0 0 0 5px rgba(227,30,36,.12)}
-    .btn-secondary{
-      background:#fff;
-      border:1px solid rgba(227,30,36,.18);
-      box-shadow:0 10px 30px rgba(15,23,42,.06);
-      color:#171717;
+    .diag-step{
+      display:grid;
+      grid-template-columns:38px minmax(0,1fr);
+      column-gap:14px;
+      align-items:start;
+      text-align:left;
     }
-    .hero{padding:46px 0 28px}
-    .grid{display:grid;grid-template-columns:minmax(0,1fr) 390px;gap:24px;align-items:start}
-    .card{
-      background:rgba(255,255,255,.96);
-      border:1px solid var(--line);
-      border-radius:24px;
-      box-shadow:0 18px 60px rgba(166,31,36,.10);
-      backdrop-filter:blur(16px);
-      -webkit-backdrop-filter:blur(16px);
-    }
-    .intro{padding:34px}
-    .chip{
-      display:inline-flex;
+    .diag-step-badge{
+      width:38px;
+      height:38px;
+      min-width:38px;
+      border-radius:9999px;
+      display:flex;
       align-items:center;
-      border:1px solid rgba(227,30,36,.42);
-      background:rgba(227,30,36,.14);
-      color:var(--red);
-      border-radius:999px;
-      padding:10px 14px;
-      font-size:12px;
+      justify-content:center;
       font-weight:900;
-      text-transform:uppercase;
-      letter-spacing:.9px;
+      font-size:16px;
+      line-height:1;
+      color:#fff;
+      background:linear-gradient(135deg,#E31E24,#b71c1c);
+      box-shadow:0 10px 24px rgba(227,30,36,.25);
+      flex-shrink:0;
+      margin-top:0;
+      align-self:start;
     }
-    h1{font-size:clamp(34px,5vw,58px);line-height:1.02;margin:22px 0 0}
-    .lead{margin:18px 0 0;color:var(--muted);font-size:18px;line-height:1.55;font-weight:700}
-    .notice{margin-top:24px;padding:18px;border-radius:18px;background:var(--panel-soft);border:1px solid rgba(227,30,36,.12);color:rgba(23,23,23,.72);font-weight:700;line-height:1.5}
-    .side{padding:24px}
-    .side h2{margin:0;font-size:24px}
-    .side-list{margin:18px 0 0;padding:0;list-style:none;display:grid;gap:12px}
-    .side-list li{display:grid;grid-template-columns:24px minmax(0,1fr);gap:10px;color:var(--muted);font-weight:750;line-height:1.45}
-    .check{color:var(--green);font-weight:950}
-    .pay-section{padding:24px 0 60px}
-    .pay-card{padding:28px}
-    .section-head{display:flex;align-items:end;justify-content:space-between;gap:16px;margin-bottom:22px}
-    .section-head h2{margin:0;font-size:clamp(26px,4vw,40px)}
-    .section-head p{margin:8px 0 0;color:var(--muted);font-weight:700}
-    form{display:grid;gap:14px}
-    .form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
-    .field{display:grid;gap:7px}
-    label{font-size:13px;color:rgba(23,23,23,.72);font-weight:850}
-    input,textarea{
-      width:100%;
-      border:1px solid rgba(227,30,36,.14);
-      background:#fff;
-      color:#171717;
-      border-radius:16px;
-      padding:15px 16px;
-      min-height:52px;
-      outline:none;
-      font:700 16px/1.35 Inter,system-ui,sans-serif;
-      transition:border-color .18s ease, background .18s ease;
-    }
-    textarea{min-height:116px;resize:vertical}
-    input::placeholder,textarea::placeholder{color:rgba(23,23,23,.42)}
-    input:focus,textarea:focus{border-color:rgba(227,30,36,.72);background:#fffdfb}
-    .amounts-title{margin:28px 0 14px;font-size:24px;font-weight:950;letter-spacing:-.02em}
-    .amount-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(112px,1fr));gap:10px}
-    .amount-btn{
-      min-height:58px;
-      border-radius:16px;
-      border:1px solid rgba(227,30,36,.28);
-      background:#fff;
-      color:#171717;
-      font-size:17px;
-      font-weight:950;
-      cursor:pointer;
-      transition:transform .16s ease, background .16s ease, border-color .16s ease;
-    }
-    .amount-btn:hover{transform:translateY(-2px);background:#fff1ec;border-color:rgba(227,30,36,.62)}
-    .message{
-      display:none;
-      margin-top:18px;
-      border-radius:18px;
-      padding:18px;
-      font-weight:800;
-      line-height:1.55;
-      border:1px solid transparent;
-    }
-    .message.is-visible{display:block}
-    .message.success{background:rgba(34,197,94,.12);border-color:rgba(34,197,94,.28);color:#116b2d}
-    .message.error{background:rgba(227,30,36,.10);border-color:rgba(227,30,36,.28);color:#9f171b}
-    .message strong{display:block;color:#171717;margin-top:6px}
-    .fallback-payment{
-      display:none;
-      margin-top:18px;
-      padding:18px;
-      border-radius:18px;
-      background:linear-gradient(180deg,#fff,#fff4ef);
-      border:1px solid rgba(227,30,36,.18);
-      box-shadow:0 14px 34px rgba(166,31,36,.08);
-    }
-    .fallback-payment.is-visible{display:block}
-    .fallback-payment p{margin:0 0 12px;color:rgba(23,23,23,.72);font-weight:800;line-height:1.45}
-    .fallback-payment .btn{width:100%;text-transform:none;letter-spacing:.2px}
-    .fineprint{
-      margin-top:18px;
-      color:rgba(23,23,23,.58);
-      font-size:13px;
+    .diag-step-text{
+      min-width:0;
+      color:rgba(255,255,255,.82);
       font-weight:700;
-      line-height:1.55;
+      line-height:1.45;
+      padding-top:2px;
     }
-    .fineprint a{color:var(--red);font-weight:950}
-    footer{padding:28px 0 42px;color:rgba(23,23,23,.56);font-weight:700;font-size:13px}
-    .footer-inner{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;border-top:1px solid rgba(227,30,36,.12);padding-top:20px}
-    .footer-inner a{color:var(--red);font-weight:950}
-    @media (max-width:900px){
-      .grid{grid-template-columns:1fr}
-      .nav-inner{align-items:flex-start}
-      .nav-links{gap:6px}
-      .nav-link{display:none}
-      .nav-link.mobile-keep{display:inline-flex}
-      .intro,.pay-card{padding:22px}
+    @media (max-width: 767px) {
+      .step-badge {
+        width: 28px;
+        height: 28px;
+        min-width: 28px;
+        min-height: 28px;
+        font-size: 14px;
+      }
+      .step-card{ padding:12px 13px; gap:12px; }
+      .mini-icon{ width:38px; height:38px; min-width:38px; border-radius:12px; }
+      .diag-step{ grid-template-columns:34px minmax(0,1fr); column-gap:12px; }
+      .diag-step-badge{ width:34px; height:34px; min-width:34px; font-size:15px; }
+      .icon-list li, .price-list li, .arrow-list li{ grid-template-columns:18px minmax(0,1fr); column-gap:10px; }
+      .icon-list li > span:first-child, .price-list li > span:first-child, .arrow-list li > span:first-child{ width:18px; min-width:18px; }
     }
-    @media (max-width:640px){
-      .brand-subtitle{display:none}
-      .logo{width:42px;height:42px}
-      .btn{width:100%;padding:15px 16px;font-size:13px}
-      .hero{padding-top:26px}
-      .form-grid{grid-template-columns:1fr}
-      .section-head{display:block}
-      .amount-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
-      .amount-btn{min-height:56px;font-size:16px}
-      .footer-inner{display:block}
-      .footer-inner div + div{margin-top:10px}
+  
+
+    .hero-stats .stat-card{
+      min-height: 116px;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      border-radius:1.6rem;
+      padding:14px 8px;
     }
-  </style>
+    .chart-mobile-scroll{
+      width:100%;
+      overflow-x:auto;
+      overflow-y:hidden;
+      -webkit-overflow-scrolling:touch;
+    }
+    .chart-mobile-inner{
+      min-width:100%;
+      height:350px;
+    }
+    #chartSvg{
+      display:block;
+      width:100%;
+      height:100%;
+    }
+    @media (max-width: 767px){
+      body{ padding-bottom:110px; }
+      .max-w-\[1120px\].mx-auto.px-4.pt-10.pb-12.md\:pt-14.md\:pb-16.w-full.relative.z-10{
+        padding-top:calc(32px + env(safe-area-inset-top));
+      }
+      .hero-stats{
+        grid-template-columns:repeat(3,minmax(0,1fr));
+        gap:12px;
+      }
+      .hero-stats .stat-card{
+        min-height:116px;
+        padding:14px 8px;
+      }
+      .hero-stats .stat-value{
+        font-size:17px;
+        line-height:1.05;
+        margin-bottom:6px;
+      }
+      .hero-stats .stat-label{
+        font-size:11px;
+        line-height:1.25;
+        max-width:86px;
+        text-align:center;
+      }
+      .chart-wrapper{
+        padding:16px 10px 18px;
+        border-radius:1.25rem;
+      }
+      .chart-mobile-scroll{
+        margin-left:-2px;
+        margin-right:-2px;
+      }
+      .chart-mobile-inner{
+        min-width:680px;
+        height:300px;
+      }
+      .mobbar .btn,
+      .mobbar .btn-telegram{
+        letter-spacing:1px;
+        padding:16px 14px !important;
+      }
+    }
+
+
+/* offline utility classes */
+.\!text-\[11px\]{font-size:11px !important;}
+.\!text-\[12px\]{font-size:12px !important;}
+.-bottom-10{bottom:-2.5rem;}
+.-bottom-16{bottom:-4rem;}
+.-left-16{left:-4rem;}
+.-left-4{left:-1rem;}
+.-right-10{right:-2.5rem;}
+.-right-14{right:-3.5rem;}
+.-top-14{top:-3.5rem;}
+.-top-3{top:-0.75rem;}
+.-top-4{top:-1rem;}
+.-translate-x-1\/2{transform:translateX(-50%);}
+.absolute{position:absolute;}
+.bg-\[\#0A0A0F\]{background-color:#0A0A0F;}
+.bg-\[\#111\]{background-color:#111111;}
+.bg-darkCard{background-color:#1A1A1A;}
+.bg-gradient-to-b{background-image:linear-gradient(to bottom,var(--tw-gradient-from),var(--tw-gradient-to));}
+.bg-gradient-to-r{background-image:linear-gradient(to right,var(--tw-gradient-from),var(--tw-gradient-to));}
+.bg-red{background-color:#E31E24;}
+.bg-red\/10{background-color:rgba(227,30,36,0.1);}
+.bg-red\/15{background-color:rgba(227,30,36,0.15);}
+.bg-red\/20{background-color:rgba(227,30,36,0.2);}
+.bg-white\/10{background-color:rgba(255,255,255,0.1);}
+.bg-white\/5{background-color:rgba(255,255,255,0.05);}
+.bg-white\/8{background-color:rgba(15,23,42,0.10);}
+.blur-3xl{filter:blur(64px);}
+.border{border-width:1px;border-style:solid;}
+.border-red\/20{border-color:rgba(227,30,36,0.2);}
+.border-red\/25{border-color:rgba(227,30,36,0.25);}
+.border-red\/30{border-color:rgba(227,30,36,0.3);}
+.border-red\/40{border-color:rgba(227,30,36,0.4);}
+.border-t{border-top-width:1px;border-top-style:solid;}
+.border-white\/10{border-color:rgba(255,255,255,0.1);}
+.border-white\/15{border-color:rgba(255,255,255,0.15);}
+.bottom-20{bottom:5rem;}
+.bottom-40{bottom:10rem;}
+.cursor-pointer{cursor:pointer;}
+.flex{display:flex;}
+.flex-1{flex:1 1 0%;}
+.flex-col{flex-direction:column;}
+.flex-wrap{flex-wrap:wrap;}
+.font-black{font-weight:900;}
+.font-bold{font-weight:700;}
+.font-display{font-family:Montserrat, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;}
+.font-extrabold{font-weight:800;}
+.font-medium{font-weight:500;}
+.font-semibold{font-weight:600;}
+.from-\[\#0A0A0F\]{--tw-gradient-from:#0A0A0F;}
+.from-\[\#111\]{--tw-gradient-from:#111111;}
+.from-red{--tw-gradient-from:#E31E24;}
+.gap-1{gap:0.25rem;}
+.gap-2{gap:0.5rem;}
+.gap-3{gap:0.75rem;}
+.gap-4{gap:1rem;}
+.gap-5{gap:1.25rem;}
+.gap-6{gap:1.5rem;}
+.gap-7{gap:1.75rem;}
+.gap-8{gap:2rem;}
+.grid{display:grid;}
+.grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr));}
+.grid-cols-3{grid-template-columns:repeat(3, minmax(0, 1fr));}
+.h-12{height:3rem;}
+.h-2{height:0.5rem;}
+.h-56{height:14rem;}
+.h-72{height:18rem;}
+.h-\[250px\]{height:250px;}
+.h-\[280px\]{height:280px;}
+.h-full{height:100%;}
+.hidden{display:none;}
+.inset-0{top:0;right:0;bottom:0;left:0;}
+.items-center{align-items:center;}
+.items-start{align-items:flex-start;}
+.justify-between{justify-content:space-between;}
+.justify-center{justify-content:center;}
+.leading-\[1\.03\]{line-height:1.03;}
+.leading-tight{line-height:1.25;}
+.left-1\/2{left:50%;}
+.left-10{left:2.5rem;}
+.left-20{left:5rem;}
+.left-5{left:1.25rem;}
+.max-w-\[1120px\]{max-width:1120px;}
+.mb-10{margin-bottom:2.5rem;}
+.mb-12{margin-bottom:3rem;}
+.mb-2{margin-bottom:0.5rem;}
+.mb-4{margin-bottom:1rem;}
+.mb-5{margin-bottom:1.25rem;}
+.mb-6{margin-bottom:1.5rem;}
+.mb-8{margin-bottom:2rem;}
+.min-h-\[110px\]{min-height:110px;}
+.min-h-\[90vh\]{min-height:90vh;}
+.ml-1{margin-left:0.25rem;}
+.mt-0\.5{margin-top:0.125rem;}
+.mt-1{margin-top:0.25rem;}
+.mt-10{margin-top:2.5rem;}
+.mt-2{margin-top:0.5rem;}
+.mt-3{margin-top:0.75rem;}
+.mt-4{margin-top:1rem;}
+.mt-5{margin-top:1.25rem;}
+.mt-6{margin-top:1.5rem;}
+.mt-7{margin-top:1.75rem;}
+.mt-8{margin-top:2rem;}
+.mx-auto{margin-left:auto;margin-right:auto;}
+.object-contain{object-fit:contain;}
+.opacity-10{opacity:.10;}
+.opacity-15{opacity:.15;}
+.opacity-20{opacity:.20;}
+.opacity-30{opacity:.30;}
+.opacity-5{opacity:.05;}
+.opacity-8{opacity:.08;}
+.overflow-hidden{overflow:hidden;}
+.p-3{padding:0.75rem;}
+.p-4{padding:1rem;}
+.p-5{padding:1.25rem;}
+.p-6{padding:1.5rem;}
+.p-7{padding:1.75rem;}
+.p-8{padding:2rem;}
+.pb-12{padding-bottom:3rem;}
+.placeholder-white\/50{--placeholder-color:rgba(255,255,255,0.5);}
+.pt-10{padding-top:2.5rem;}
+.pt-6{padding-top:1.5rem;}
+.px-3{padding-left:0.75rem;padding-right:0.75rem;}
+.px-4{padding-left:1rem;padding-right:1rem;}
+.px-6{padding-left:1.5rem;padding-right:1.5rem;}
+.py-1{padding-top:0.25rem;padding-bottom:0.25rem;}
+.py-14{padding-top:3.5rem;padding-bottom:3.5rem;}
+.py-2{padding-top:0.5rem;padding-bottom:0.5rem;}
+.py-3{padding-top:0.75rem;padding-bottom:0.75rem;}
+.py-4{padding-top:1rem;padding-bottom:1rem;}
+.relative{position:relative;}
+.right-1\/4{right:25%;}
+.right-10{right:2.5rem;}
+.right-20{right:5rem;}
+.rotate-\[-20deg\]{transform:rotate(-20deg);}
+.rounded-full{border-radius:9999px;}
+.rounded-xl{border-radius:0.75rem;}
+.rounded-xl2{border-radius:1.35rem;}
+.rounded-xl3{border-radius:1.75rem;}
+.sticky{position:sticky;}
+.text-\[11px\]{font-size:11px;}
+.text-\[12px\]{font-size:12px;}
+.text-\[13px\]{font-size:13px;}
+.text-\[14px\]{font-size:14px;}
+.text-\[15px\]{font-size:15px;}
+.text-\[16px\]{font-size:16px;}
+.text-\[18px\]{font-size:18px;}
+.text-\[20px\]{font-size:20px;}
+.text-\[22px\]{font-size:22px;}
+.text-\[26px\]{font-size:26px;}
+.text-\[28px\]{font-size:28px;}
+.text-\[32px\]{font-size:32px;}
+.text-\[34px\]{font-size:34px;}
+.text-\[80px\]{font-size:80px;}
+.text-center{text-align:center;}
+.text-green-500{color:#22c55e;}
+.text-red{color:#E31E24;}
+.text-white{color:#fff;}
+.text-white\/50{color:rgba(255,255,255,0.5);}
+.text-white\/55{color:rgba(255,255,255,0.55);}
+.text-white\/60{color:rgba(255,255,255,0.6);}
+.text-white\/65{color:rgba(255,255,255,0.65);}
+.text-white\/70{color:rgba(255,255,255,0.7);}
+.text-white\/75{color:rgba(255,255,255,0.75);}
+.text-white\/80{color:rgba(255,255,255,0.8);}
+.to-\[\#080808\]{--tw-gradient-to:#080808;}
+.to-\[\#0A0A0F\]{--tw-gradient-to:#0A0A0F;}
+.to-\[\#111\]{--tw-gradient-to:#111111;}
+.to-red\/70{--tw-gradient-to:rgba(227,30,36,.7);}
+.top-0{top:0;}
+.top-1\/2{top:50%;}
+.top-1\/4{top:25%;}
+.top-10{top:2.5rem;}
+.top-20{top:5rem;}
+.top-40{top:10rem;}
+.tracking-tight{letter-spacing:-0.03em;}
+.tracking-wider{letter-spacing:0.08em;}
+.tracking-widest{letter-spacing:0.12em;}
+.transition{transition:all .2s ease;}
+.uppercase{text-transform:uppercase;}
+.w-12{width:3rem;}
+.w-56{width:14rem;}
+.w-72{width:18rem;}
+.w-\[82\%\]{width:82%;}
+.w-\[85\%\]{width:85%;}
+.w-\[87\%\]{width:87%;}
+.w-\[89\%\]{width:89%;}
+.w-\[90\%\]{width:90%;}
+.w-\[91\%\]{width:91%;}
+.w-\[92\%\]{width:92%;}
+.w-\[95\%\]{width:95%;}
+.w-\[88\%\]{width:88%;}
+.w-\[96\%\]{width:96%;}
+.w-full{width:100%;}
+.z-10{z-index:10;}
+.z-50{z-index:50;}
+
+[class*="placeholder-white\/"]::placeholder{color:var(--placeholder-color);}
+.space-y-3 > :not([hidden]) ~ :not([hidden]){margin-top:0.75rem;}
+.space-y-4 > :not([hidden]) ~ :not([hidden]){margin-top:1rem;}
+.review-placeholder svg, .video-placeholder svg {max-width:100%;}
+img{display:block;max-width:100%;}
+a{text-decoration:none;}
+summary{list-style:none;}
+summary::-webkit-details-marker{display:none;}
+
+@media (min-width: 640px){.sm\:grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr));}}
+@media (min-width: 768px){.md\:flex{display:flex;}.md\:gap-6{gap:1.5rem;}.md\:grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr));}.md\:grid-cols-3{grid-template-columns:repeat(3, minmax(0, 1fr));}.md\:grid-cols-4{grid-template-columns:repeat(4, minmax(0, 1fr));}.md\:grid-cols-5{grid-template-columns:repeat(5, minmax(0, 1fr));}.md\:hidden{display:none;}.md\:items-center{align-items:center;}.md\:justify-between{justify-content:space-between;}.md\:p-12{padding:3rem;}.md\:p-8{padding:2rem;}.md\:pb-16{padding-bottom:4rem;}.md\:pt-14{padding-top:3.5rem;}.md\:py-20{padding-top:5rem;padding-bottom:5rem;}.md\:text-\[14px\]{font-size:14px;}.md\:text-\[18px\]{font-size:18px;}.md\:text-\[26px\]{font-size:26px;}.md\:text-\[36px\]{font-size:36px;}.md\:text-\[40px\]{font-size:40px;}.md\:text-\[44px\]{font-size:44px;}.md\:text-\[54px\]{font-size:54px;}}
+@media (min-width: 1024px){.lg\:grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr));}}
+
+    .review-real{
+      overflow:hidden;
+      border-radius:1.25rem;
+      border:1px solid rgba(227,30,36,.22);
+      background:rgba(255,255,255,.02);
+      box-shadow:0 10px 30px rgba(0,0,0,.28);
+    }
+    .review-real img{
+      display:block;
+      width:100%;
+      height:auto;
+      background:#f2f2f2;
+    }
+    .video-card{aspect-ratio:9/16;
+      overflow:hidden;
+      border-radius:1.25rem;
+      border:1px solid rgba(227,30,36,.22);
+      background:rgba(255,255,255,.03);
+      box-shadow:0 10px 30px rgba(0,0,0,.28);
+      padding:14px;
+    }
+    .video-card video{background:#000; object-fit:contain;
+      width:100%;
+      border-radius:1rem;
+      background:#000;
+      display:block;
+    }
+    .cta-mid{
+      background:linear-gradient(180deg, rgba(18,18,18,.96), rgba(10,10,15,.98));
+      border:1px solid rgba(227,30,36,.18);
+      border-radius:1.75rem;
+      padding:24px;
+      text-align:center;
+      box-shadow:0 18px 60px rgba(227,30,36,.12);
+    }
+    .mini-note{
+      color:rgba(255,255,255,.68);
+      font-weight:700;
+      font-size:14px;
+    }
+
+    .reviews-scroll{display:flex; gap:16px; overflow-x:auto; padding:4px 2px 10px; scroll-snap-type:x proximity; -webkit-overflow-scrolling:touch;}
+    .reviews-scroll::-webkit-scrollbar{height:8px;}
+    .reviews-scroll::-webkit-scrollbar-thumb{background:rgba(227,30,36,.35); border-radius:999px;}
+    .reviews-scroll > .review-real{flex:0 0 min(88vw, 420px); scroll-snap-align:start;}
+    .reviews-scroll > .review-real img{width:100%; height:auto; display:block; border-radius:1rem;}
+    @media (min-width: 768px){ .reviews-scroll > .review-real{flex-basis:360px;} }
+
+
+
+    /* v9 lighter theme */
+    body{
+      background: linear-gradient(180deg, #1d2230 0%, #171c28 42%, #121723 100%);
+      color:#f5f7fb;
+    }
+    .navblur{
+      background:rgba(29,34,48,.88);
+      border-bottom:1px solid rgba(255,255,255,.08);
+    }
+    .mobbar{
+      background:rgba(24,29,41,.92);
+      border-top:1px solid rgba(255,255,255,.10);
+    }
+    .hero-gradient{
+      background:
+        radial-gradient(ellipse 80% 55% at 50% -20%, rgba(227,30,36,.18), transparent),
+        radial-gradient(ellipse 60% 45% at 90% 20%, rgba(59,130,246,.10), transparent),
+        radial-gradient(ellipse 70% 55% at 10% 85%, rgba(255,255,255,.05), transparent),
+        linear-gradient(180deg, #202635 0%, #171d2a 100%);
+    }
+    .glass-dark{
+      background:rgba(38,44,58,.88);
+      border:1px solid rgba(255,255,255,.08);
+      box-shadow:0 16px 44px rgba(0,0,0,.28);
+    }
+    .chart-wrapper{
+      background: linear-gradient(180deg, rgba(42,48,62,.96) 0%, rgba(30,36,48,.98) 100%);
+      border:1px solid rgba(255,255,255,.10);
+    }
+    .review-real, .video-card{
+      border:1px solid rgba(255,255,255,.08);
+      background:rgba(42,48,62,.92);
+      box-shadow:0 12px 30px rgba(0,0,0,.22);
+    }
+    .mini-note{color:rgba(255,255,255,.78)!important;}
+
+
+
+    /* v13 brighter brand theme */
+    body{
+      background: linear-gradient(180deg, #111318 0%, #0d0f14 44%, #090a0f 100%) !important;
+      color:#fffaf8 !important;
+    }
+    body::before{
+      content:'';
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      background:
+        radial-gradient(ellipse 72% 48% at 50% -10%, rgba(227,30,36,.22), transparent 60%),
+        radial-gradient(ellipse 36% 26% at 12% 22%, rgba(255,255,255,.08), transparent 70%),
+        radial-gradient(ellipse 34% 24% at 88% 18%, rgba(227,30,36,.14), transparent 72%),
+        radial-gradient(ellipse 55% 40% at 50% 75%, rgba(227,30,36,.07), transparent 78%);
+      z-index:0;
+    }
+    header, main, footer, section{position:relative; z-index:1;}
+    section{background:transparent !important;}
+    .hero-gradient{
+      background:
+        radial-gradient(ellipse 88% 62% at 50% -20%, rgba(227,30,36,.26), transparent 62%),
+        radial-gradient(ellipse 46% 34% at 92% 18%, rgba(255,255,255,.08), transparent 72%),
+        radial-gradient(ellipse 44% 34% at 10% 78%, rgba(227,30,36,.10), transparent 74%),
+        linear-gradient(180deg, rgba(25,28,35,.98) 0%, rgba(15,17,22,.99) 100%) !important;
+    }
+    .navblur{
+      background:rgba(17,19,24,.90) !important;
+      border-bottom:1px solid rgba(227,30,36,.22) !important;
+      box-shadow:0 8px 30px rgba(0,0,0,.18);
+    }
+    .mobbar{
+      background:rgba(15,17,22,.94) !important;
+      border-top:1px solid rgba(227,30,36,.24) !important;
+      box-shadow:0 -10px 30px rgba(0,0,0,.18);
+    }
+    .glass-dark,
+    .review-real,
+    .video-card,
+    .chart-wrapper,
+    .cta-mid{
+      background:
+        linear-gradient(180deg, rgba(27,30,37,.98) 0%, rgba(18,20,26,.99) 100%) !important;
+      border:1px solid rgba(227,30,36,.18) !important;
+      box-shadow:
+        0 16px 44px rgba(0,0,0,.18),
+        0 0 0 1px rgba(255,255,255,.02) inset,
+        0 0 35px rgba(227,30,36,.06) !important;
+    }
+    .review-real img{background:#f4f0ec;}
+    .glow-red{box-shadow:0 0 0 rgba(0,0,0,0), 0 20px 60px rgba(227,30,36,.16) !important;}
+    .btn{
+      background:linear-gradient(135deg,#ff343d 0%,#e31e24 52%,#b81419 100%) !important;
+      box-shadow:0 16px 42px rgba(227,30,36,.28) !important;
+    }
+    .btn:hover{box-shadow:0 22px 48px rgba(227,30,36,.35) !important;}
+    .chip{
+      background:rgba(227,30,36,.16) !important;
+      border-color:rgba(227,30,36,.42) !important;
+      color:#ff5b63 !important;
+      box-shadow:0 8px 24px rgba(227,30,36,.10) !important;
+    }
+    .mini-note{color:rgba(255,255,255,.86)!important;}
+    .text-white\/70{color:rgba(255,255,255,.82) !important;}
+    .text-white\/60{color:rgba(255,255,255,.72) !important;}
+    .text-white\/50{color:rgba(255,255,255,.60) !important;}
+    .videos-scroll{
+      display:flex;
+      gap:16px;
+      overflow-x:auto;
+      padding:4px 2px 12px;
+      scroll-snap-type:x proximity;
+      -webkit-overflow-scrolling:touch;
+    }
+    .videos-scroll::-webkit-scrollbar{height:8px;}
+    .videos-scroll::-webkit-scrollbar-thumb{background:rgba(227,30,36,.34); border-radius:999px;}
+    .videos-scroll > .video-card{
+      flex:0 0 min(82vw, 340px);
+      scroll-snap-align:start;
+      aspect-ratio:9/16;
+    }
+    @media (min-width: 768px){
+      .videos-scroll > .video-card{flex-basis:320px;}
+    }
+
+
+  /* --- sales light theme overrides --- */
+  body{background:linear-gradient(180deg,#fffaf6 0%,#fff7f2 40%,#fffdfb 100%) !important;color:#171717 !important;}
+  section{background:transparent !important;}
+  .hero-gradient{background:radial-gradient(ellipse 70% 40% at 50% -10%, rgba(227,30,36,.12), transparent), radial-gradient(ellipse 45% 35% at 100% 0%, rgba(255,126,95,.12), transparent), linear-gradient(180deg,#fffaf6 0%,#fff7f2 100%) !important;}
+  .navblur{background:rgba(255,250,245,.94)!important;border-bottom:1px solid rgba(227,30,36,.14)!important;}
+  .glass-dark,.chart-wrapper,.cta-mid,.review-real,.video-card,.pricing-card,.mobbar{background:rgba(255,255,255,.92)!important;border-color:rgba(227,30,36,.14)!important;box-shadow:0 18px 50px rgba(166,31,36,.08)!important;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);}
+  .cta-mid{background:linear-gradient(180deg,rgba(255,255,255,.98),rgba(255,247,242,.98))!important;}
+  .text-white{color:#171717 !important;}
+  .text-white\/80{color:rgba(23,23,23,.82)!important;}
+  .text-white\/75,.mini-note{color:rgba(23,23,23,.76)!important;}
+  .text-white\/70,.text-white\/60,.text-white\/55,.text-white\/50{color:rgba(23,23,23,.68)!important;}
+  .bg-white\/5{background:rgba(255,255,255,.78)!important;}
+  .border-white\/10{border-color:rgba(227,30,36,.12)!important;}
+  .border-white\/20{border-color:rgba(227,30,36,.16)!important;}
+  .chip{background:rgba(255,92,54,.08)!important;color:#c82128!important;border-color:rgba(227,30,36,.24)!important;box-shadow:none!important;}
+  .btn{background:linear-gradient(135deg,#ff6a3d 0%,#E31E24 52%,#b71c1c 100%)!important;box-shadow:0 18px 44px rgba(227,30,36,.22)!important;}
+  .btn:hover{box-shadow:0 24px 60px rgba(227,30,36,.3)!important;}
+  .btn-pay{background:linear-gradient(135deg,#ff2b2b 0%,#E31E24 44%,#8f1115 100%)!important;color:#fff!important;border:1px solid rgba(255,255,255,.34)!important;box-shadow:0 20px 58px rgba(227,30,36,.42),0 0 0 4px rgba(227,30,36,.08)!important;}
+  .btn-pay:hover{transform:translateY(-3px) scale(1.015)!important;box-shadow:0 28px 76px rgba(227,30,36,.56),0 0 0 5px rgba(227,30,36,.12)!important;}
+  .btn-secondary{background:#fff !important;color:#171717 !important;border:1px solid rgba(227,30,36,.18)!important;box-shadow:0 10px 30px rgba(15,23,42,.06)!important;}
+  .btn-secondary:hover{background:#fff4ef !important;}
+  .hero-note{font-weight:800;color:rgba(23,23,23,.68);font-size:13px;}
+  .proof-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;}
+  .proof-card{padding:22px;border-radius:1.5rem;background:linear-gradient(180deg,#fff,#fff8f5);border:1px solid rgba(227,30,36,.14);box-shadow:0 12px 28px rgba(166,31,36,.06);}
+  .proof-card-number{width:42px;height:42px;border-radius:999px;display:flex;align-items:center;justify-content:center;background:rgba(227,30,36,.1);color:#E31E24;font-weight:900;font-size:18px;}
+  .proof-card-title{margin-top:14px;font-weight:900;color:#171717;font-size:18px;line-height:1.2;}
+  .proof-card-text{margin-top:10px;color:rgba(23,23,23,.72);font-weight:700;font-size:14px;line-height:1.5;}
+  .chart-note{max-width:860px;}
+  input,textarea{background:rgba(255,255,255,.82)!important;color:#171717!important;border-color:rgba(227,30,36,.14)!important;}
+  input::placeholder,textarea::placeholder{color:rgba(23,23,23,.45)!important;}
+  #tgBtn{background:#fff !important;color:#171717 !important;border:1px solid rgba(227,30,36,.18)!important;box-shadow:0 10px 28px rgba(15,23,42,.06)!important;}
+  #tgBtn svg path{fill:#E31E24 !important;}
+   .mobbar{background:rgba(255,250,245,.96)!important;border-top:1px solid rgba(227,30,36,.14)!important;}
+  .btn-telegram{background:#fff !important;color:#171717 !important;border:1px solid rgba(227,30,36,.18)!important;box-shadow:0 10px 28px rgba(15,23,42,.06)!important;}
+  .btn-telegram svg path{fill:#E31E24 !important;}
+  .glow-red{box-shadow:0 16px 44px rgba(227,30,36,.12)!important;}
+
+  @media (max-width: 900px){.proof-grid{grid-template-columns:repeat(2,minmax(0,1fr));}}
+  @media (max-width: 640px){.proof-grid{grid-template-columns:1fr;}.proof-card{padding:18px;}}
+
+
+  /* --- mobile bug fixes --- */
+  .text-white\/65{color:rgba(23,23,23,.68)!important;}
+  .diag-step-text{color:rgba(23,23,23,.82)!important;}
+  .diag-step-badge,
+  .step-badge,
+  .proof-card-number{
+    -webkit-font-smoothing:antialiased;
+    text-rendering:geometricPrecision;
+  }
+  @media (max-width: 767px){
+    body{padding-bottom:0 !important;}
+    .mobbar{display:none !important;}
+    .navblur,
+    .glass-dark,
+    .chart-wrapper,
+    .cta-mid,
+    .review-real,
+    .video-card,
+    .pricing-card{
+      backdrop-filter:none !important;
+      -webkit-backdrop-filter:none !important;
+    }
+    .diag-step-badge,
+    .step-badge,
+    .proof-card-number,
+    .mini-icon{
+      box-shadow:none !important;
+    }
+  }
+
+
+  .note-card-strong{background:linear-gradient(180deg,#fff3f1 0%, #ffe8e5 100%)!important;border:1.5px solid rgba(227,30,36,.28)!important;color:#555!important;box-shadow:0 8px 20px rgba(227,30,36,.04)!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;}
+  .note-card-strong span{color:#2a2a2a!important;font-weight:900;}
+  .note-card-soft{background:linear-gradient(180deg,#fffefe 0%, #fff9f8 100%)!important;border:1.5px solid rgba(227,30,36,.16)!important;color:#676767!important;box-shadow:0 6px 18px rgba(15,23,42,.02)!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;}
+  .note-card-soft span{color:#323232!important;font-weight:900;}
+  .chart-pill-red{background:linear-gradient(180deg,#fff4f1 0%, #ffeaea 100%)!important;border:1.5px solid rgba(227,30,36,.28)!important;color:#555!important;box-shadow:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;}
+  .chart-pill-red .pill-main{color:#d83030!important;font-weight:900;}
+  .chart-pill-red .pill-sub{color:#666!important;font-weight:700;}
+  .chart-pill-gray{background:linear-gradient(180deg,#f7f7f8 0%, #efeff1 100%)!important;border:1.5px solid rgba(15,23,42,.08)!important;color:#555!important;box-shadow:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;}
+  .chart-pill-gray .pill-main{color:#1c1c1c!important;font-weight:900;}
+  .chart-pill-gray .pill-sub{color:#666!important;font-weight:700;}
+
+
+
+  /* --- legal / payment / documents blocks --- */
+  .legal-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;}
+  .legal-card{padding:22px;border-radius:1.5rem;background:linear-gradient(180deg,#fff,#fff8f5);border:1px solid rgba(227,30,36,.14);box-shadow:0 12px 28px rgba(166,31,36,.06);}
+  .legal-card h3{font-size:20px;font-weight:900;margin:0 0 12px;color:#171717;letter-spacing:-.02em;}
+  .legal-card p,.legal-card li{color:rgba(23,23,23,.74);font-weight:700;line-height:1.55;font-size:14px;}
+  .legal-card ul{margin:10px 0 0;padding-left:18px;}
+  .legal-links{display:flex;flex-wrap:wrap;gap:12px;margin-top:24px;}
+  .legal-link{display:inline-flex;align-items:center;justify-content:center;padding:12px 18px;border-radius:999px;background:#fff;color:#171717!important;border:1px solid rgba(227,30,36,.18);font-weight:900;box-shadow:0 10px 28px rgba(15,23,42,.06);}
+  .doc-block{max-height:520px;overflow:auto;padding:26px;border-radius:1.5rem;background:#fff;border:1px solid rgba(227,30,36,.14);box-shadow:0 12px 28px rgba(166,31,36,.06);}
+  .doc-block h3{font-size:24px;font-weight:900;margin:0 0 14px;color:#171717;letter-spacing:-.02em;}
+  .doc-block h4{font-size:17px;font-weight:900;margin:24px 0 8px;color:#171717;}
+  .doc-block p,.doc-block li{color:rgba(23,23,23,.76);font-weight:650;line-height:1.6;font-size:14px;}
+  .doc-block ul{padding-left:20px;margin:8px 0 0;}
+  .price-note{margin-top:14px;padding:14px;border-radius:1rem;background:rgba(227,30,36,.08);border:1px solid rgba(227,30,36,.14);font-weight:900;color:#171717;}
+  @media (max-width: 900px){.legal-grid{grid-template-columns:1fr;}.doc-block{max-height:none;}}
+
+</style>
 </head>
-<body>
-  <header class="nav">
-    <div class="wrap">
-      <div class="nav-inner">
-        <a class="brand" href="index.html">
-          <span class="logo"><img alt="RED LINE" src="assets/images/logo.png"></span>
-          <span>
-            <span class="brand-title">RED LINE</span>
-            <span class="brand-subtitle">ОГЭ • ЕГЭ • Любые классы</span>
-          </span>
-        </a>
-        <nav class="nav-links" aria-label="Навигация">
-          <a class="nav-link" href="index.html#pricing">Тарифы</a>
-          <a class="nav-link" href="index.html#legal">Документы</a>
-          <a class="nav-link" href="index.html#offer">Оферта</a>
-          <a class="nav-link mobile-keep btn btn-pay" href="index.html">На главную</a>
-        </nav>
+<body class="text-white">
+<!-- NAV -->
+<header class="navblur sticky top-0 z-50">
+<div class="max-w-[1120px] mx-auto px-4 py-3 flex items-center justify-between gap-3">
+<a class="flex items-center gap-3" href="#top">
+<div class="w-12 h-12 rounded-xl bg-darkCard border border-red/20 flex items-center justify-center overflow-hidden">
+<img alt="RED LINE" class="w-full h-full object-contain" decoding="async" loading="eager" src="assets/images/logo.png">
+</div>
+<div class="leading-tight">
+<div class="font-display font-black tracking-tight text-[16px] text-white">RED LINE</div>
+<div class="text-[11px] text-red font-semibold">ОГЭ • ЕГЭ • Любые классы</div>
+</div>
+</a>
+<div class="hidden md:flex items-center gap-1">
+<a class="px-3 py-2 text-[13px] font-bold text-white/70 hover:text-white transition" href="#why">Почему мы</a>
+<a class="px-3 py-2 text-[13px] font-bold text-white/70 hover:text-white transition" href="#results">Результаты</a>
+<a class="px-3 py-2 text-[13px] font-bold text-white/70 hover:text-white transition" href="#reviews">Отзывы</a>
+<a class="px-3 py-2 text-[13px] font-bold text-white/70 hover:text-white transition" href="#pricing">Тарифы</a>
+<a class="px-3 py-2 text-[13px] font-bold text-white/70 hover:text-white transition" href="#legal">Документы</a>
+<a class="px-3 py-2 text-[13px] font-bold text-white/70 hover:text-white transition" href="https://t.me/managerRL" rel="noopener" target="_blank">Связаться с нами</a>
+<a class="btn btn-pay !py-2.5 !px-5 !text-[12px]" href="pay.html">Оплатить занятие</a>
+<a class="btn !py-2.5 !px-5 !text-[12px]" href="#diag">Диагностика</a>
+</div>
+<div class="md:hidden flex items-center gap-2">
+<a class="btn btn-pay !py-2.5 !px-4 !text-[11px]" href="pay.html">Оплатить</a>
+<a class="btn !py-2.5 !px-4 !text-[11px]" href="#diag">Диагностика</a>
+</div>
+</div>
+</header>
+<!-- HERO -->
+<main id="top">
+<section class="hero-gradient min-h-[90vh] flex items-center relative overflow-hidden">
+<!-- Decorative elements -->
+<div class="absolute top-20 left-10 opacity-20 float-element hidden lg:block">
+<svg fill="none" height="60" viewBox="0 0 60 60" width="60">
+<rect height="50" rx="3" stroke="#E31E24" stroke-width="2" width="40" x="10" y="5"></rect>
+<line stroke="#E31E24" stroke-width="2" x1="15" x2="45" y1="15" y2="15"></line>
+<line stroke="#E31E24" stroke-width="2" x1="15" x2="40" y1="25" y2="25"></line>
+<line stroke="#E31E24" stroke-width="2" x1="15" x2="35" y1="35" y2="35"></line>
+</svg>
+</div>
+<div class="absolute bottom-40 right-20 opacity-15 float-element hidden lg:block" style="animation-delay: -2s;">
+<svg fill="none" height="50" viewBox="0 0 50 50" width="50">
+<path d="M25 5L30 20H45L33 30L38 45L25 35L12 45L17 30L5 20H20L25 5Z" fill="none" stroke="#E31E24" stroke-width="2"></path>
+</svg>
+</div>
+<div class="absolute top-1/2 left-5 opacity-10 float-element hidden xl:block" style="animation-delay: -1s;">
+<svg fill="none" height="80" viewBox="0 0 80 80" width="80">
+<circle cx="40" cy="40" r="35" stroke="#fff" stroke-width="2"></circle>
+<path d="M25 40L35 50L55 30" stroke="#E31E24" stroke-width="3"></path>
+</svg>
+</div>
+<!-- Additional school decorations -->
+<div class="absolute top-40 right-10 opacity-10 float-element hidden xl:block" style="animation-delay: -3s;">
+<svg fill="none" height="70" viewBox="0 0 70 70" width="70">
+<!-- Pencil -->
+<rect height="50" rx="2" stroke="#E31E24" stroke-width="2" width="15" x="25" y="5"></rect>
+<polygon fill="none" points="32.5,55 25,70 40,70" stroke="#E31E24" stroke-width="2"></polygon>
+<rect fill="rgba(227,30,36,0.3)" height="8" width="15" x="25" y="5"></rect>
+</svg>
+</div>
+<div class="absolute bottom-20 left-20 opacity-8 float-element hidden xl:block" style="animation-delay: -1.5s;">
+<svg fill="none" height="60" viewBox="0 0 60 60" width="60">
+<!-- Graduation cap -->
+<path d="M30 10L5 25L30 40L55 25L30 10Z" fill="none" stroke="#E31E24" stroke-width="2"></path>
+<path d="M15 30V45L30 55L45 45V30" fill="none" stroke="#E31E24" stroke-width="2"></path>
+</svg>
+</div>
+<!-- ABC text decoration -->
+<div class="absolute top-1/4 right-1/4 opacity-5 hidden lg:block text-[80px] font-black text-red tracking-widest">
+        АБВ
+      </div>
+<div class="max-w-[1120px] mx-auto px-4 pt-10 pb-12 md:pt-14 md:pb-16 w-full relative z-10">
+<div class="grid md:grid-cols-2 gap-7 items-center">
+<div>
+<div class="flex flex-wrap gap-2 mb-5"><span class="chip">500+ учеников</span><span class="chip">95% ОГЭ на 4–5</span><span class="chip">Диагностика 30 минут</span></div>
+<h1 class="text-[34px] md:text-[54px] font-display font-black leading-[1.03] text-white">Поднимем баллы <span class="text-red">ЕГЭ/ОГЭ</span> на <span class="text-red">20–40+</span> за 3 месяца</h1>
+<p class="mt-4 text-[16px] md:text-[18px] text-white/70 font-semibold">Бесплатная диагностика за 30 минут + индивидуальный план. Уже помогли 500+ ученикам. Работаем с ВПР, ОГЭ, ЕГЭ и повышением успеваемости у 5–11 классов.</p>
+<div class="mt-7 flex flex-col sm:flex-row gap-3"><a class="btn w-full sm:w-auto" href="#diag">Пройти бесплатную диагностику прямо сейчас</a><a class="btn btn-secondary w-full sm:w-auto" href="#pricing">Посмотреть тарифы</a><a class="btn btn-pay w-full sm:w-auto" href="pay.html">Оплатить занятие</a></div><div class="mt-3 hero-note">Без оплаты • Без обязательств • 127 диагностик в этом месяце</div>
+<div class="mt-6 grid grid-cols-3 gap-3 hero-stats">
+<div class="glass-dark p-3 text-center stat-card">
+<div class="text-[18px] font-display font-black text-red stat-value">500+</div>
+<div class="text-[11px] font-bold text-white/60 stat-label">учеников уже прошли путь с нами</div>
+</div>
+<div class="glass-dark p-3 text-center stat-card">
+<div class="text-[18px] font-display font-black text-red stat-value">95%</div>
+<div class="text-[11px] font-bold text-white/60 stat-label">сдают ОГЭ на 4–5</div>
+</div>
+<div class="glass-dark p-3 text-center stat-card">
+<div class="text-[18px] font-display font-black text-red stat-value">20–40+</div>
+<div class="text-[11px] font-bold text-white/60 stat-label">типичный рост баллов за 3 месяца</div>
+</div>
+</div>
+</div>
+<div class="glass-dark p-6 md:p-8 relative overflow-hidden">
+<div class="absolute -top-14 -right-14 w-56 h-56 rounded-full bg-red/10 blur-3xl"></div>
+<div class="absolute -bottom-16 -left-16 w-72 h-72 rounded-full bg-white/5 blur-3xl"></div>
+<h3 class="text-[22px] md:text-[26px] font-display font-black text-white">Что будет на бесплатной диагностике</h3>
+<ul class="mt-5 space-y-3 text-[15px] font-semibold text-white/75"><li class="flex gap-3"><span class="text-green-500 font-black">✓</span>За 30 минут разбираем текущий уровень и главные пробелы</li><li class="flex gap-3"><span class="text-green-500 font-black">✓</span>Показываем, почему баллы не растут или где проседает успеваемость</li><li class="flex gap-3"><span class="text-green-500 font-black">✓</span>Даём индивидуальный план на ближайшие 4–8 недель</li><li class="flex gap-3"><span class="text-green-500 font-black">✓</span>Честно говорим, какой формат поможет ребёнку быстрее</li></ul>
+<div class="mt-6 p-4 rounded-xl2 font-semibold note-card-strong"><span class="font-black">Важно:</span> это не «просто консультация». После разговора вы понимаете, что мешает ребёнку расти и какой шаг самый полезный сейчас.</div>
+<div class="mt-6 p-4 rounded-xl2 font-semibold note-card-soft"><span class="font-black">Без давления:</span> сначала бесплатный разбор, потом решение. Даже если не начнёте заниматься, у вас останется понятный план действий.</div>
+</div>
+</div>
+</div>
+</section>
+<!-- TUTOR MATCHING -->
+<section class="py-10 md:py-14 relative">
+<div class="max-w-[1120px] mx-auto px-4">
+<div class="glass-dark p-7 md:p-8">
+<div class="text-[13px] uppercase tracking-widest font-black text-red">После первой заявки родителю становится спокойнее</div>
+<h2 class="mt-2 text-[28px] md:text-[40px] font-display font-black text-white">Что именно происходит дальше</h2>
+<p class="mt-3 text-white/70 font-semibold max-w-3xl">Мы не продаём занятия вслепую. Сначала за 30 минут разбираем ситуацию ребёнка, потом даём понятный план, а уже после этого вы спокойно решаете, нужен ли вам дальнейший формат обучения.</p>
+<p class="mt-3 text-white/70 font-semibold max-w-3xl"><span class="font-black text-red">Важно:</span> занятия проводят преподаватели-партнёры, в том числе самозанятые исполнители. RED LINE организует подбор, расписание, оплату, коммуникацию и сопровождение обучения.</p>
+<div class="proof-grid mt-7">
+<div class="proof-card"><div class="proof-card-number">1</div><div class="proof-card-title">Понимаете, где ребёнок сейчас</div><div class="proof-card-text">Без сложных терминов объясняем уровень, пробелы и что именно мешает росту.</div></div>
+<div class="proof-card"><div class="proof-card-number">2</div><div class="proof-card-title">Видите реальный план</div><div class="proof-card-text">Показываем, что делать в ближайшие недели и как распределить нагрузку без перегруза.</div></div>
+<div class="proof-card"><div class="proof-card-number">3</div><div class="proof-card-title">Понимаете, кто нужен ребёнку</div><div class="proof-card-text">Сразу подсказываем, какой преподаватель и формат дадут лучший шанс на результат.</div></div>
+<div class="proof-card"><div class="proof-card-number">4</div><div class="proof-card-title">Не чувствуете давления</div><div class="proof-card-text">Диагностика бесплатная и ни к чему не обязывает. Вы принимаете решение только после ясной картины.</div></div>
+</div>
+</div>
+</div>
+</section>
+<!-- WHY -->
+<section class="py-14 md:py-20 bg-[#111] relative" id="why">
+<div class="max-w-[1120px] mx-auto px-4">
+<h2 class="text-[28px] md:text-[40px] font-display font-black text-white">Почему родители выбирают Red Line, а не обычного репетитора</h2>
+<p class="mt-3 text-white/70 font-semibold max-w-2xl">Вам не нужно искать преподавателя, контролировать каждое занятие и переживать, что всё сорвётся. <span class="font-black text-red">Мы берём процесс на себя</span> и держим вас в курсе по-человечески и регулярно.</p>
+<div class="mt-8 grid md:grid-cols-2 gap-5">
+<div class="glass-dark p-7 border border-white/10">
+<div class="text-[14px] font-black text-white/50 uppercase tracking-widest">Когда всё держится на одном человеке</div>
+<ul class="mt-4 space-y-3 font-semibold text-white/60"><li class="flex gap-2"><span class="text-red">✗</span>родителю приходится самому искать и сравнивать преподавателей</li><li class="flex gap-2"><span class="text-red">✗</span>если преподаватель пропал или не подошёл — процесс стопорится</li><li class="flex gap-2"><span class="text-red">✗</span>непонятно, как измерять прогресс и что делать дальше</li><li class="flex gap-2"><span class="text-red">✗</span>вся ответственность за контроль остаётся на семье</li><li class="flex gap-2"><span class="text-red">✗</span>часто нет системы, только отдельные уроки</li></ul>
+</div>
+<div class="glass-dark p-7 border border-red/30 glow-red">
+<div class="text-[14px] font-black text-red uppercase tracking-widest">Что получает родитель в Red Line</div>
+<ul class="mt-4 space-y-3 font-semibold text-white/80"><li class="flex gap-2"><span class="text-green-500">✓</span>подбор преподавателя под цель ребёнка и его уровень</li><li class="flex gap-2"><span class="text-green-500">✓</span>замену преподавателя без потери темпа, если это нужно</li><li class="flex gap-2"><span class="text-green-500">✓</span>еженедельную обратную связь простыми словами</li><li class="flex gap-2"><span class="text-green-500">✓</span>контроль качества и понятный план до результата</li><li class="flex gap-2"><span class="text-green-500">✓</span>ощущение, что вы не тащите всё на себе</li></ul>
+<div class="mt-6 p-4 rounded-xl2 bg-red/10 border border-red/20 font-semibold text-white/70"><span class="font-black text-white">Главный плюс для родителя:</span> вы перестаёте жить в режиме «надо срочно спасать подготовку» и наконец понимаете, что происходит и что делать дальше.</div>
+</div>
+</div>
+</div>
+</section>
+<!-- RESULTS GRAPH -->
+<section class="py-14 md:py-20 bg-gradient-to-b from-[#111] to-[#0A0A0F] relative" id="results">
+<!-- Ruler decoration -->
+<div class="absolute left-5 top-1/2 opacity-10 hidden xl:block">
+<svg fill="none" height="200" viewBox="0 0 30 200" width="30">
+<line stroke="#fff" stroke-width="2" x1="15" x2="15" y1="0" y2="200"></line>
+<line stroke="#fff" stroke-width="2" x1="5" x2="25" y1="0" y2="0"></line>
+<line stroke="#fff" stroke-width="1" x1="10" x2="20" y1="25" y2="25"></line>
+<line stroke="#fff" stroke-width="1" x1="10" x2="20" y1="50" y2="50"></line>
+<line stroke="#fff" stroke-width="2" x1="5" x2="25" y1="75" y2="75"></line>
+<line stroke="#fff" stroke-width="1" x1="10" x2="20" y1="100" y2="100"></line>
+<line stroke="#fff" stroke-width="1" x1="10" x2="20" y1="125" y2="125"></line>
+<line stroke="#fff" stroke-width="2" x1="5" x2="25" y1="150" y2="150"></line>
+<line stroke="#fff" stroke-width="1" x1="10" x2="20" y1="175" y2="175"></line>
+<line stroke="#fff" stroke-width="2" x1="5" x2="25" y1="200" y2="200"></line>
+</svg>
+</div>
+<div class="max-w-[1120px] mx-auto px-4">
+<div class="text-center mb-12">
+<h2 class="text-[28px] md:text-[40px] font-display font-black text-white">Результаты, которые родители видят в цифрах</h2>
+<p class="mt-3 text-white/70 font-semibold max-w-2xl mx-auto">Не обещаем чудес за один вечер. Показываем реальные ориентиры: сколько обычно растут баллы, как быстро виден прогресс и что происходит, когда есть система.</p>
+</div>
+<!-- Stats Row -->
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-10">
+<div class="glass-dark p-5 text-center">
+<div class="text-[32px] md:text-[44px] font-display font-black text-red">20–40+</div>
+<div class="text-[12px] md:text-[14px] text-white/60 font-semibold">рост баллов за 3 месяца</div>
+</div>
+<div class="glass-dark p-5 text-center">
+<div class="text-[32px] md:text-[44px] font-display font-black text-red">95%</div>
+<div class="text-[12px] md:text-[14px] text-white/60 font-semibold">сдают ОГЭ на 4 и 5</div>
+</div>
+<div class="glass-dark p-5 text-center">
+<div class="text-[32px] md:text-[44px] font-display font-black text-red">500+</div>
+<div class="text-[12px] md:text-[14px] text-white/60 font-semibold">учеников уже помогли подготовить</div>
+</div>
+<div class="glass-dark p-5 text-center">
+<div class="text-[32px] md:text-[44px] font-display font-black text-red">30 мин</div>
+<div class="text-[12px] md:text-[14px] text-white/60 font-semibold">длится бесплатная диагностика</div>
+</div>
+</div>
+<!-- SVG Chart with Line - FIXED POINTS -->
+<div class="chart-wrapper">
+<div class="text-center mb-6">
+<span class="text-[15px] font-bold text-white/80">Пример кейса: с 44 до 87 баллов за 3 месяца</span>
+</div>
+<div class="chart-mobile-scroll"><div class="chart-mobile-inner" style="min-width:100%;">
+<svg class="w-full h-full" id="chartSvg" preserveAspectRatio="xMinYMid meet" viewBox="0 0 520 320">
+<g stroke="rgba(15,23,42,0.10)" stroke-width="1">
+<line x1="60" x2="500" y1="20" y2="20"></line>
+<line x1="60" x2="500" y1="76" y2="76"></line>
+<line x1="60" x2="500" y1="132" y2="132"></line>
+<line x1="60" x2="500" y1="188" y2="188"></line>
+<line x1="60" x2="500" y1="244" y2="244"></line>
+<line x1="60" x2="500" y1="300" y2="300"></line>
+</g>
+<g fill="rgba(15,23,42,0.55)" font-size="12" font-weight="600">
+<text text-anchor="end" x="45" y="24">100</text>
+<text text-anchor="end" x="45" y="80">80</text>
+<text text-anchor="end" x="45" y="136">60</text>
+<text text-anchor="end" x="45" y="192">40</text>
+<text text-anchor="end" x="45" y="248">20</text>
+<text text-anchor="end" x="45" y="304">0</text>
+</g>
+<defs>
+<linearGradient id="areaGradient2" x1="0%" x2="0%" y1="0%" y2="100%">
+<stop offset="0%" style="stop-color:rgba(227,30,36,0.34)"></stop>
+<stop offset="100%" style="stop-color:rgba(227,30,36,0)"></stop>
+</linearGradient>
+<linearGradient id="lineGradient2" x1="0%" x2="100%" y1="0%" y2="0%">
+<stop offset="0%" style="stop-color:#E31E24"></stop>
+<stop offset="50%" style="stop-color:#FF6B6B"></stop>
+<stop offset="100%" style="stop-color:#E31E24"></stop>
+</linearGradient>
+</defs>
+<path class="chart-area" d="M100,177 L280,123 L460,56 L460,300 L100,300 Z" fill="url(#areaGradient2)" id="chartArea" style="animation: 1s ease-out 1s 1 normal forwards running fadeIn;"></path>
+<polyline class="chart-line" fill="none" id="chartLine" points="100,177 280,123 460,56" stroke="url(#lineGradient2)" stroke-linecap="round" stroke-linejoin="round" stroke-width="5" style="animation: 2s ease-out 0s 1 normal forwards running drawLine;"></polyline>
+<g id="dataPoints">
+<circle class="chart-point" cx="100" cy="177" fill="#E31E24" r="10" style="animation-delay: 0.2s; animation-play-state: running;"></circle>
+<circle class="chart-point" cx="100" cy="177" fill="#fff" r="5" style="animation-delay: 0.2s; animation-play-state: running;"></circle>
+<text class="chart-point" fill="#E31E24" font-size="16" font-weight="900" style="animation-delay: 0.2s; animation-play-state: running;" text-anchor="middle" x="100" y="203">44</text>
+<circle class="chart-point" cx="280" cy="123" fill="#f97316" r="10" style="animation-delay: 0.5s; animation-play-state: running;"></circle>
+<circle class="chart-point" cx="280" cy="123" fill="#fff" r="5" style="animation-delay: 0.5s; animation-play-state: running;"></circle>
+<text class="chart-point" fill="#f97316" font-size="16" font-weight="900" style="animation-delay: 0.5s; animation-play-state: running;" text-anchor="middle" x="280" y="106">66</text>
+<circle class="chart-point" cx="460" cy="56" fill="#22c55e" r="12" style="animation-delay: 0.8s; filter: drop-shadow(rgba(34, 197, 94, 0.7) 0px 0px 10px); animation-play-state: running;"></circle>
+<circle class="chart-point" cx="460" cy="56" fill="#fff" r="6" style="animation-delay: 0.8s; animation-play-state: running;"></circle>
+<text class="chart-point" fill="#22c55e" font-size="18" font-weight="900" style="animation-delay: 0.8s; animation-play-state: running;" text-anchor="middle" x="460" y="39">87</text>
+</g>
+<g fill="rgba(255,255,255,0.7)" font-size="12" font-weight="700" text-anchor="middle">
+<text x="100" y="320">Сейчас</text>
+<text x="280" y="320">1,5 месяца</text>
+<text x="460" y="320">3 месяц</text>
+</g>
+</svg>
+</div></div>
+<div class="mt-6 flex flex-wrap items-center justify-center gap-3">
+<div class="px-4 py-2 rounded-full chart-pill-red text-[13px]">
+<span class="pill-main">+43 балла</span>
+<span class="pill-sub ml-1">прирост за 3 месяца</span>
+</div>
+<div class="px-4 py-2 rounded-full chart-pill-gray text-[13px]">
+<span class="pill-sub">Финальный результат: </span>
+<span class="pill-main">87 баллов</span>
+</div>
+</div>
+</div><div class="mt-4 chart-note text-[14px] font-semibold text-white/70">Это пример одной из типовых траекторий, когда у ребёнка есть пробелы, понятный план и регулярный контроль. На диагностике мы честно скажем, какой результат реалистичен именно в вашем случае.</div>
+<!-- Subject results -->
+<div class="mt-8 grid md:grid-cols-3 gap-5">
+<div class="glass-dark p-6 border border-red/20">
+<div class="font-display font-black text-[20px] text-white">ЕГЭ Русский язык</div>
+<div class="mt-2 text-white/60 font-semibold">Средний балл: <span class="text-red font-black">89</span></div>
+<div class="mt-3 h-2 rounded-full bg-white/10 overflow-hidden">
+<div class="h-full w-[89%] bg-gradient-to-r from-red to-red/70 rounded-full"></div>
+</div>
+</div>
+<div class="glass-dark p-6 border border-red/20">
+<div class="font-display font-black text-[20px] text-white">ЕГЭ Математика</div>
+<div class="mt-2 text-white/60 font-semibold">Средний балл: <span class="text-red font-black">91</span></div>
+<div class="mt-3 h-2 rounded-full bg-white/10 overflow-hidden">
+<div class="h-full w-[91%] bg-gradient-to-r from-red to-red/70 rounded-full"></div>
+</div>
+</div>
+<div class="glass-dark p-6 border border-red/20">
+<div class="font-display font-black text-[20px] text-white">ЕГЭ Химия</div>
+<div class="mt-2 text-white/60 font-semibold">Средний балл: <span class="text-red font-black">90</span></div>
+<div class="mt-3 h-2 rounded-full bg-white/10 overflow-hidden">
+<div class="h-full w-[90%] bg-gradient-to-r from-red to-red/70 rounded-full"></div>
+</div>
+</div>
+<div class="glass-dark p-6 border border-red/20">
+<div class="font-display font-black text-[20px] text-white">ЕГЭ Информатика</div>
+<div class="mt-2 text-white/60 font-semibold">Средний балл: <span class="text-red font-black">95</span></div>
+<div class="mt-3 h-2 rounded-full bg-white/10 overflow-hidden">
+<div class="h-full w-[95%] bg-gradient-to-r from-red to-red/70 rounded-full"></div>
+</div>
+</div>
+<div class="glass-dark p-6 border border-red/20">
+<div class="font-display font-black text-[20px] text-white">ОГЭ все предметы</div>
+<div class="mt-2 text-white/60 font-semibold">Результат: <span class="text-red font-black">95% сдали на 4–5</span></div>
+<div class="mt-3 h-2 rounded-full bg-white/10 overflow-hidden">
+<div class="h-full w-[95%] bg-gradient-to-r from-red to-red/70 rounded-full"></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section class="py-6 bg-[#0A0A0F]">
+<div class="max-w-[1120px] mx-auto px-4">
+<div class="cta-mid">
+<div class="text-[24px] md:text-[32px] font-display font-black text-white">Не знаете, с чего начать?</div>
+<p class="mt-3 mini-note">Начните с бесплатной диагностики: за 30 минут поймёте, где ребёнок сейчас и что делать дальше без лишней суеты.</p>
+<a class="btn mt-5 w-full md:w-auto" href="#diag">Пройти бесплатную диагностику</a>
+</div>
+</div>
+</section>
+<!-- REVIEWS -->
+<section class="py-14 md:py-20 bg-[#0A0A0F] relative" id="reviews">
+<div class="max-w-[1120px] mx-auto px-4"><div class="text-center mb-10">
+<h2 class="text-[28px] md:text-[40px] font-display font-black text-white">Отзывы родителей, которые уже увидели результат</h2>
+<p class="mt-3 text-white/70 font-semibold max-w-xl mx-auto">Сначала родители переживали за оценки и экзамены. Ниже — что они говорят после начала занятий и получения первых результатов.</p>
+</div>
+<div class="mb-10">
+<h3 class="text-[18px] font-bold text-white/80 mb-4 flex items-center gap-2">
+<svg fill="none" height="20" stroke="#E31E24" stroke-width="2" viewBox="0 0 24 24" width="20">
+<rect height="18" rx="2" ry="2" width="18" x="3" y="3"></rect>
+<circle cx="8.5" cy="8.5" r="1.5"></circle>
+<polyline points="21 15 16 10 5 21"></polyline>
+</svg>
+    Фото-отзывы родителей
+  </h3>
+<div class="reviews-scroll">
+<div class="review-real"><img alt="Фото-отзыв 1" decoding="async" loading="lazy" src="assets/images/review-1.jpg"></div><div class="review-real"><img alt="Фото-отзыв 2" decoding="async" loading="lazy" src="assets/images/review-2.jpg"></div><div class="review-real"><img alt="Фото-отзыв 3" decoding="async" loading="lazy" src="assets/images/review-3.jpg"></div><div class="review-real"><img alt="Фото-отзыв 4" decoding="async" loading="lazy" src="assets/images/review-4.jpg"></div><div class="review-real"><img alt="Фото-отзыв 5" decoding="async" loading="lazy" src="assets/images/review-5.jpg"></div></div></div>
+<div class="mb-10">
+<h3 class="text-[18px] font-bold text-white/80 mb-4 flex items-center gap-2">
+<svg fill="none" height="20" stroke="#E31E24" stroke-width="2" viewBox="0 0 24 24" width="20">
+<polygon points="5 3 19 12 5 21 5 3"></polygon>
+</svg>
+    Видео-отзывы родителей
+  </h3>
+<div class="videos-scroll"><div class="video-card">
+<video controls="" playsinline="" poster="data:image/svg+xml;utf8,&lt;svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 900 1600'&gt;&lt;defs&gt;&lt;linearGradient id='g' x1='0' y1='0' x2='1' y2='1'&gt;&lt;stop stop-color='%230a0a0f'/&gt;&lt;stop offset='1' stop-color='%2316161d'/&gt;&lt;/linearGradient&gt;&lt;/defs&gt;&lt;rect width='100%' height='100%' fill='url(%23g)'/&gt;&lt;rect x='60' y='250' width='780' height='1100' rx='40' fill='%230b0b10' stroke='%23E31E24' stroke-opacity='.35'/&gt;&lt;circle cx='450' cy='800' r='90' fill='%23E31E24'/&gt;&lt;polygon points='425,750 425,850 510,800' fill='white'/&gt;&lt;text x='450' y='980' text-anchor='middle' font-family='Arial, sans-serif' font-size='54' font-weight='700' fill='white'&gt;Видео-отзыв&lt;/text&gt;&lt;text x='450' y='1045' text-anchor='middle' font-family='Arial, sans-serif' font-size='34' fill='%23c9c9d1'&gt;Нажмите, чтобы посмотреть&lt;/text&gt;&lt;/svg&gt;" preload="none" data-loaded="true">
+<source type="video/mp4" src="assets/videos/video-review-1.mp4">
+      Ваш браузер не поддерживает видео.
+    </video>
+</div><div class="video-card mt-4">
+<video controls="" playsinline="" poster="data:image/svg+xml;utf8,&lt;svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 900 1600'&gt;&lt;defs&gt;&lt;linearGradient id='g' x1='0' y1='0' x2='1' y2='1'&gt;&lt;stop stop-color='%23161a22'/&gt;&lt;stop offset='1' stop-color='%23232833'/&gt;&lt;/linearGradient&gt;&lt;/defs&gt;&lt;rect width='100%' height='100%' fill='url(%23g)'/&gt;&lt;rect x='60' y='250' width='780' height='1100' rx='40' fill='%23181d27' stroke='%23E31E24' stroke-opacity='.25'/&gt;&lt;circle cx='450' cy='800' r='90' fill='%23E31E24'/&gt;&lt;polygon points='425,750 425,850 510,800' fill='white'/&gt;&lt;text x='450' y='980' text-anchor='middle' font-family='Arial, sans-serif' font-size='54' font-weight='700' fill='white'&gt;Видео-отзыв&lt;/text&gt;&lt;text x='450' y='1045' text-anchor='middle' font-family='Arial, sans-serif' font-size='34' fill='%23575763'&gt;Нажмите, чтобы посмотреть&lt;/text&gt;&lt;/svg&gt;" preload="none" data-loaded="true">
+<source type="video/mp4" src="assets/videos/video-review-2.mp4">
+Ваш браузер не поддерживает видео.
+</video>
+</div></div>
+</div>
+</div>
+</section>
+<!-- HOW -->
+<section class="py-14 md:py-20 bg-gradient-to-b from-[#0A0A0F] to-[#111] relative" id="how">
+<div class="max-w-[1120px] mx-auto px-4">
+<h2 class="text-[28px] md:text-[40px] font-display font-black text-white">Как всё происходит после заявки</h2>
+<p class="mt-3 text-white/70 font-semibold max-w-2xl">Мы специально сделали процесс простым и понятным для родителей: без сложных слов, без хаоса и без навязывания.</p>
+<div class="mt-8 grid md:grid-cols-5 gap-4">
+<div class="glass-dark p-5 relative border border-white/10 hover:border-red/30 transition">
+<div class="text-red font-black text-[12px] uppercase tracking-widest">Шаг 1</div>
+<div class="mt-2 font-display font-black text-[18px] text-white">Бесплатная диагностика</div>
+<div class="mt-2 text-white/60 font-semibold text-[14px]">Смотрим текущий уровень, пробелы и цель ребёнка.</div>
+</div>
+<div class="glass-dark p-5 relative border border-white/10 hover:border-red/30 transition">
+<div class="text-red font-black text-[12px] uppercase tracking-widest">Шаг 2</div>
+<div class="mt-2 font-display font-black text-[18px] text-white">Подбор преподавателя</div>
+<div class="mt-2 text-white/60 font-semibold text-[14px]">Предлагаем преподавателя, который подходит по задаче и уровню.</div>
+</div>
+<div class="glass-dark p-5 relative border border-white/10 hover:border-red/30 transition">
+<div class="text-red font-black text-[12px] uppercase tracking-widest">Шаг 3</div>
+<div class="mt-2 font-display font-black text-[18px] text-white">План занятий</div>
+<div class="mt-2 text-white/60 font-semibold text-[14px]">Делаем понятный план: что учим, в каком темпе и зачем.</div>
+</div>
+<div class="glass-dark p-5 relative border border-white/10 hover:border-red/30 transition">
+<div class="text-red font-black text-[12px] uppercase tracking-widest">Шаг 4</div>
+<div class="mt-2 font-display font-black text-[18px] text-white">Отчёты родителям</div>
+<div class="mt-2 text-white/60 font-semibold text-[14px]">Вы видите, что получается, где есть рост и что делаем дальше.</div>
+</div>
+<div class="glass-dark p-5 relative border border-red/30 glow-red">
+<div class="text-red font-black text-[12px] uppercase tracking-widest">Шаг 5</div>
+<div class="mt-2 font-display font-black text-[18px] text-white">Рост результата</div>
+<div class="mt-2 text-white/60 font-semibold text-[14px]">Баллы и уверенность ребёнка растут без перегруза и выгорания.</div>
+</div>
+</div>
+<div class="mt-8 glass-dark p-7 border border-red/20">
+<div class="font-display font-black text-[22px] text-white">Что это значит для родителя</div>
+<p class="mt-2 text-white/70 font-semibold"><span class="font-black text-white">«Наконец понятно, что происходит»</span> — это главный эффект для семьи. Мы берём на себя организацию, контроль, подбор преподавателя и движение к цели, а вы получаете спокойствие и понятную картину прогресса.</p>
+<a class="btn mt-6 w-full md:w-auto" href="#diag">Начать с бесплатной диагностики</a>
+</div>
+</div>
+</section>
+<!-- GUARANTEE -->
+<section class="py-14 md:py-20 bg-[#12161e]">
+<div class="max-w-[1120px] mx-auto px-4">
+<div class="glass-dark p-8 border border-white/10 glow-red relative overflow-hidden">
+<div class="absolute -right-10 -bottom-10 opacity-10">
+<svg fill="none" height="150" viewBox="0 0 150 150" width="150">
+<circle cx="75" cy="75" r="70" stroke="#E31E24" stroke-width="4"></circle>
+<path d="M40 75L65 100L110 50" stroke="#E31E24" stroke-linecap="round" stroke-linejoin="round" stroke-width="6"></path>
+</svg>
+</div>
+<h2 class="text-[26px] md:text-[36px] font-display font-black text-white">Страховка: сначала бесплатная диагностика</h2>
+<p class="mt-3 text-white/75 font-semibold text-[16px] md:text-[18px]">Вы оставляете заявку, мы <span class="font-black text-red">бесплатно</span> разбираем ситуацию ребёнка и даём понятный план. Никакой оплаты заранее, никакого давления — после диагностики вы сами решаете, идти дальше или нет.</p>
+<div class="mt-6 grid md:grid-cols-3 gap-4">
+<div class="p-5 rounded-xl2 bg-white/5 border border-white/10">
+<div class="font-black text-white">Без оплаты</div>
+<div class="mt-1 text-white/60 font-semibold text-[14px]">Никаких авансов и скрытых платежей до решения с вашей стороны.</div>
+</div>
+<div class="p-5 rounded-xl2 bg-white/5 border border-white/10">
+<div class="font-black text-white">Без навязывания</div>
+<div class="mt-1 text-white/60 font-semibold text-[14px]">После диагностики вы ничем не обязаны — просто получаете ясность.</div>
+</div>
+<div class="p-5 rounded-xl2 bg-white/5 border border-white/10">
+<div class="font-black text-white">С понятным итогом</div>
+<div class="mt-1 text-white/60 font-semibold text-[14px]">Вы уходите не с общими словами, а с конкретным планом действий.</div>
+</div>
+</div>
+<a class="btn mt-6 w-full md:w-auto" href="#diag">Пройти бесплатную диагностику</a>
+</div>
+</div>
+</section>
+<!-- PRICING -->
+<section class="py-14 md:py-20 bg-gradient-to-b from-[#111] to-[#0A0A0F]" id="pricing">
+<div class="max-w-[1120px] mx-auto px-4">
+<h2 class="text-[28px] md:text-[40px] font-display font-black text-white text-center">Тарифы</h2>
+<p class="mt-3 text-white/70 font-semibold max-w-2xl mx-auto text-center">Сначала разберём ситуацию ребёнка на бесплатной диагностике, а уже потом подскажем, какой тариф действительно нужен вашей семье.</p>
+<div class="mt-10 grid md:grid-cols-3 gap-6">
+<!-- Базовый -->
+<div class="pricing-card glass-dark p-7 border border-white/10">
+<div class="text-[12px] uppercase tracking-widest font-black text-white/50">Базовый</div>
+<div class="mt-2 font-display font-black text-[26px] text-white">Регулярные занятия</div><div class="price-note">от 1200 ₽ за занятие</div><div class="mt-2 text-[14px] text-white/70 font-semibold">Подойдёт, если нужен понятный старт и регулярные занятия без перегруза.</div>
+<ul class="mt-6 space-y-3 text-white/70 font-semibold price-list">
+<li class="flex gap-3 items-start">
+<span class="text-green-500 font-black mt-0.5">✓</span>
+<span>Системная подготовка по плану</span>
+</li>
+<li class="flex gap-3 items-start">
+<span class="text-green-500 font-black mt-0.5">✓</span>
+<span>Домашние задания с проверкой</span>
+</li>
+<li class="flex gap-3 items-start">
+<span class="text-green-500 font-black mt-0.5">✓</span>
+<span>Поддержка по ходу обучения</span>
+</li>
+<li class="flex gap-3 items-start">
+<span class="text-green-500 font-black mt-0.5">✓</span>
+<span>Подбор преподавателя через анализ</span>
+</li>
+</ul>
+<div class="mt-8 pt-6 border-t border-white/10">
+<a class="w-full py-4 rounded-xl2 font-extrabold border border-red/30 bg-white/5 text-white hover:bg-white/10 transition flex items-center justify-center" href="#diag" style="max-width:100%;">
+                Выбрать тариф
+              </a>
+<a class="mt-3 btn btn-pay w-full" href="pay.html" style="max-width:100%;">Оплатить занятие</a>
+</div>
+</div>
+<!-- Расширенный -->
+<div class="pricing-card featured glass-dark p-7 border border-red/40 relative glow-red">
+<div class="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-red text-white text-[11px] font-black uppercase tracking-wider">
+              Популярный
+            </div>
+<div class="text-[12px] uppercase tracking-widest font-black text-red">Расширенный</div>
+<div class="mt-2 font-display font-black text-[26px] text-white">Занятия + контроль</div><div class="price-note">от 1400 ₽ за занятие</div><div class="mt-2 text-[14px] text-white/70 font-semibold">Оптимально, если важны результат, контроль и спокойствие родителей.</div>
+<ul class="mt-6 space-y-3 text-white/80 font-semibold price-list">
+<li class="flex gap-3 items-start">
+<span class="text-green-500 font-black mt-0.5">✓</span>
+<span>Системная подготовка по плану</span>
+</li>
+<li class="flex gap-3 items-start">
+<span class="text-green-500 font-black mt-0.5">✓</span>
+<span>Домашние задания с проверкой</span>
+</li>
+<li class="flex gap-3 items-start">
+<span class="text-green-500 font-black mt-0.5">✓</span>
+<span>Поддержка по ходу обучения</span>
+</li>
+<li class="flex gap-3 items-start">
+<span class="text-green-500 font-black mt-0.5">✓</span>
+<span>Подбор преподавателя через анализ</span>
+</li>
+<li class="flex gap-3 items-start">
+<span class="text-green-500 font-black mt-0.5">✓</span>
+<span>Контрольные срезы знаний</span>
+</li>
+<li class="flex gap-3 items-start">
+<span class="text-green-500 font-black mt-0.5">✓</span>
+<span>Еженедельные отчёты родителям</span>
+</li>
+<li class="flex gap-3 items-start">
+<span class="text-green-500 font-black mt-0.5">✓</span>
+<span>Точечные корректировки программы</span>
+</li>
+<li class="flex gap-3 items-start">
+<span class="text-green-500 font-black mt-0.5">✓</span>
+<span>Приоритетная замена преподавателя</span>
+</li>
+</ul>
+<div class="mt-8 pt-6 border-t border-red/20">
+<a class="btn w-full" href="#diag" style="max-width:100%;">Выбрать тариф</a>
+<a class="mt-3 btn btn-pay w-full" href="pay.html" style="max-width:100%;">Оплатить занятие</a>
+</div>
+</div>
+<!-- Премиальный -->
+<div class="pricing-card glass-dark p-7 border border-white/10">
+<div class="text-[12px] uppercase tracking-widest font-black text-white/50">Премиальный</div>
+<div class="mt-2 font-display font-black text-[26px] text-white">Полный контроль</div><div class="price-note">от 1600 ₽ за занятие</div><div class="mt-2 text-[14px] text-white/70 font-semibold">Для семей, которые хотят максимально снять с себя контроль и получить полное сопровождение.</div>
+<ul class="mt-6 space-y-3 text-white/70 font-semibold price-list">
+<li class="flex gap-3 items-start">
+<span class="text-green-500 font-black mt-0.5">✓</span>
+<span>Системная подготовка по плану</span>
+</li>
+<li class="flex gap-3 items-start">
+<span class="text-green-500 font-black mt-0.5">✓</span>
+<span>Домашние задания с проверкой</span>
+</li>
+<li class="flex gap-3 items-start">
+<span class="text-green-500 font-black mt-0.5">✓</span>
+<span>Поддержка по ходу обучения</span>
+</li>
+<li class="flex gap-3 items-start">
+<span class="text-green-500 font-black mt-0.5">✓</span>
+<span>Подбор преподавателя через анализ</span>
+</li>
+<li class="flex gap-3 items-start">
+<span class="text-green-500 font-black mt-0.5">✓</span>
+<span>Контрольные срезы знаний</span>
+</li>
+<li class="flex gap-3 items-start">
+<span class="text-green-500 font-black mt-0.5">✓</span>
+<span>Еженедельные отчёты родителям</span>
+</li>
+<li class="flex gap-3 items-start">
+<span class="text-green-500 font-black mt-0.5">✓</span>
+<span>Точечные корректировки программы</span>
+</li>
+<li class="flex gap-3 items-start">
+<span class="text-green-500 font-black mt-0.5">✓</span>
+<span>Приоритетная замена преподавателя</span>
+</li>
+<li class="flex gap-3 items-start">
+<span class="text-green-500 font-black mt-0.5">✓</span>
+<span>Персональная стратегия подготовки</span>
+</li>
+<li class="flex gap-3 items-start">
+<span class="text-green-500 font-black mt-0.5">✓</span>
+<span>Личный куратор</span>
+</li>
+<li class="flex gap-3 items-start">
+<span class="text-green-500 font-black mt-0.5">✓</span>
+<span>Ежедневные отчёты родителям</span>
+</li>
+<li class="flex gap-3 items-start">
+<span class="text-green-500 font-black mt-0.5">✓</span>
+<span>Экстренная связь 24/7</span>
+</li>
+</ul>
+<div class="mt-8 pt-6 border-t border-white/10">
+<a class="w-full py-4 rounded-xl2 font-extrabold border border-red/30 bg-white/5 text-white hover:bg-white/10 transition flex items-center justify-center" href="#diag" style="max-width:100%;">
+                Выбрать тариф
+              </a>
+<a class="mt-3 btn btn-pay w-full" href="pay.html" style="max-width:100%;">Оплатить занятие</a>
+</div>
+</div>
+</div>
+<div class="mt-8 glass-dark p-7 flex flex-col md:flex-row md:items-center md:justify-between gap-4 border border-white/10">
+<div>
+<div class="font-display font-black text-[22px] text-white">Не знаете, что выбрать?</div>
+<div class="mt-1 text-white/70 font-semibold">Оставьте заявку на бесплатную диагностику — после неё мы посоветуем тариф под цель ребёнка и ваш бюджет.</div>
+</div>
+<div class="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+<a class="btn w-full md:w-auto" href="#diag">Получить рекомендации</a>
+<a class="btn btn-pay w-full md:w-auto" href="pay.html">Оплатить занятие</a>
+</div>
+</div>
+</div>
+</section>
+<!-- FAQ -->
+<section class="py-14 md:py-20 bg-[#0A0A0F]">
+<div class="max-w-[1120px] mx-auto px-4">
+<h2 class="text-[28px] md:text-[40px] font-display font-black text-white">FAQ</h2>
+<p class="mt-3 text-white/70 font-semibold max-w-2xl">Коротко отвечаем на самые частые вопросы родителей.</p>
+<div class="mt-7 space-y-3">
+<details class="glass-dark p-6 border border-white/10 hover:border-red/20 transition">
+<summary class="cursor-pointer font-display font-black text-[18px] text-white">Сколько длится бесплатная диагностика?</summary>
+<p class="mt-3 text-white/70 font-semibold">Обычно около 30 минут. За это время мы успеваем понять уровень ребёнка, главные пробелы и следующий шаг.</p>
+</details>
+<details class="glass-dark p-6 border border-white/10 hover:border-red/20 transition">
+<summary class="cursor-pointer font-display font-black text-[18px] text-white">А если преподаватель не подойдёт?</summary>
+<p class="mt-3 text-white/70 font-semibold">Мы не оставляем семью один на один с проблемой: подберём другого преподавателя и не дадим процессу остановиться.</p>
+</details>
+<details class="glass-dark p-6 border border-white/10 hover:border-red/20 transition">
+<summary class="cursor-pointer font-display font-black text-[18px] text-white">Как вы выбираете преподавателя?</summary>
+<p class="mt-3 text-white/70 font-semibold">Смотрим на задачу ребёнка, уровень, темп и формат, который ему подойдёт. Объясняем выбор простыми словами.</p>
+</details>
+<details class="glass-dark p-6 border border-white/10 hover:border-red/20 transition">
+<summary class="cursor-pointer font-display font-black text-[18px] text-white">Как вы следите за качеством?</summary>
+<p class="mt-3 text-white/70 font-semibold">У нас есть единая система подготовки, контроль результатов и регулярная обратная связь родителям.</p>
+</details>
+<details class="glass-dark p-6 border border-white/10 hover:border-red/20 transition">
+<summary class="cursor-pointer font-display font-black text-[18px] text-white">Что нужно, чтобы начать?</summary>
+<p class="mt-3 text-white/70 font-semibold">Оставьте заявку на бесплатную диагностику. После неё станет понятно, нужен ли формат занятий и какой именно.</p>
+</details>
+
+<details class="glass-dark p-6 border border-white/10 hover:border-red/20 transition">
+<summary class="cursor-pointer font-display font-black text-[18px] text-white">Кто проводит занятия?</summary>
+<p class="mt-3 text-white/70 font-semibold">Занятия проводят преподаватели-партнёры, в том числе самозанятые исполнители. RED LINE организует подбор преподавателя, расписание, оплату, коммуникацию, сопровождение и контроль качества.</p>
+</details>
+<details class="glass-dark p-6 border border-white/10 hover:border-red/20 transition">
+<summary class="cursor-pointer font-display font-black text-[18px] text-white">Как проходит оплата и возврат?</summary>
+<p class="mt-3 text-white/70 font-semibold">Оплата производится онлайн банковской картой или через СБП с использованием CloudPayments. Электронный чек направляется покупателю автоматически. Возврат возможен за неоказанные занятия по обращению на email или в Telegram.</p>
+</details>
+</div>
+</div>
+</section>
+<!-- DIAGNOSTIC (CTA) -->
+<section class="py-14 md:py-20 bg-gradient-to-b from-[#0A0A0F] to-[#080808]" id="diag">
+<div class="max-w-[1120px] mx-auto px-4">
+<div class="glass-dark p-8 border border-red/30 glow-red">
+<h2 class="text-[28px] md:text-[40px] font-display font-black text-white">Пройти бесплатную диагностику за 30 минут</h2>
+<p class="mt-3 text-white/70 font-semibold max-w-2xl">Оставьте контакты — мы свяжемся, согласуем время и бесплатно разберём ситуацию ребёнка. После разговора у вас будет понятный план дальнейших действий.</p>
+<div class="mt-7 grid lg:grid-cols-2 gap-6">
+<div>
+<form class="space-y-3" id="leadForm">
+<input class="w-full px-4 py-4 rounded-xl2 border border-white/10 bg-white/5 font-semibold text-white placeholder-white/50 focus:border-red/50 focus:outline-none transition" id="name" name="name" placeholder="Имя родителя" required="">
+<input class="w-full px-4 py-4 rounded-xl2 border border-white/10 bg-white/5 font-semibold text-white placeholder-white/50 focus:border-red/50 focus:outline-none transition" id="phone" name="phone" placeholder="Телефон" required="">
+<div class="grid sm:grid-cols-2 gap-3">
+<input class="w-full px-4 py-4 rounded-xl2 border border-white/10 bg-white/5 font-semibold text-white placeholder-white/50 focus:border-red/50 focus:outline-none transition" id="grade" name="grade" placeholder="Класс (например, 6)" required="">
+<input class="w-full px-4 py-4 rounded-xl2 border border-white/10 bg-white/5 font-semibold text-white placeholder-white/50 focus:border-red/50 focus:outline-none transition" id="subject" name="subject" placeholder="Предмет (математика/русский...)" required="">
+</div>
+<textarea class="w-full px-4 py-4 rounded-xl2 border border-white/10 bg-white/5 font-semibold text-white placeholder-white/50 focus:border-red/50 focus:outline-none transition min-h-[110px]" id="comment" name="comment" placeholder="Коротко: цель / сроки / что беспокоит?"></textarea>
+<button class="btn w-full" id="submitBtn" style="max-width:100%;" type="submit">
+<span id="btnText">Пройти бесплатную диагностику прямо сейчас</span>
+</button>
+<div id="formMessage"></div>
+<div class="text-[12px] text-white/60 font-semibold">Оставляя заявку, вы соглашаетесь с <a href="#privacy" class="text-red font-black">политикой обработки персональных данных</a> и даёте согласие на обработку данных для связи по диагностике.</div>
+</form>
+</div>
+<div class="p-6 rounded-xl3 bg-white/5 border border-red/20">
+<div class="font-display font-black text-[22px] text-white">После заявки всё понятно</div>
+<ol class="diag-steps">
+<li class="diag-step">
+<span class="diag-step-badge">1</span>
+<span class="diag-step-text">Мы связываемся и выбираем удобное время для бесплатной диагностики</span>
+</li>
+<li class="diag-step">
+<span class="diag-step-badge">2</span>
+<span class="diag-step-text">За 30 минут разбираем уровень, пробелы и цель ребёнка</span>
+</li>
+<li class="diag-step">
+<span class="diag-step-badge">3</span>
+<span class="diag-step-text">Вы получаете план и понимаете, стоит ли начинать занятия сейчас</span>
+</li>
+</ol>
+<div class="mt-6 p-4 rounded-xl2 font-semibold note-card-strong"><span class="font-black">Без давления:</span> сначала разбор и понятный план, потом — только ваше решение.</div>
+<a class="mt-6 btn-telegram w-full justify-center" href="https://t.me/managerRL" id="tgBtn" rel="noopener" style="max-width:100%;" target="_blank">Есть вопрос? Напишите в Telegram</a>
+</div>
+</div>
+<div class="mt-8 pt-6 border-t border-white/10 flex flex-col md:flex-row gap-3 md:items-center md:justify-between text-white/55 font-semibold text-[13px]">
+<div>© <span id="year">2026</span> RED LINE · <a href="#legal" class="text-red font-black">Реквизиты</a> · <a href="#offer" class="text-red font-black">Оферта</a> · <a href="#privacy" class="text-red font-black">Политика ПДн</a></div>
+<div class="flex items-center gap-2">
+<span class="text-red">●</span> Система • Контроль • Результат
+            </div>
+</div>
+</div>
+</div>
+</section>
+<!-- PRICE LIST FINAL BLOCK -->
+<section class="py-14 md:py-20 bg-gradient-to-b from-[#080808] to-[#0A0A0F]" id="price-list-final">
+<div class="max-w-[1120px] mx-auto px-4">
+<div class="glass-dark p-8 border border-red/30 glow-red">
+<h2 class="text-[28px] md:text-[40px] font-display font-black text-white">Прайс-лист Redline</h2>
+<p class="mt-5 text-[18px] md:text-[22px] text-white/80 font-black">
+Индивидуальные онлайн-занятия с репетитором — <span class="text-red">от 1200 ₽</span> за занятие.
+</p>
+<div class="mt-6 p-6 rounded-xl3 bg-white/5 border border-red/20">
+<div class="font-display font-black text-[22px] text-white">В стоимость входит:</div>
+<ul class="mt-5 space-y-3 text-white/75 font-semibold price-list">
+<li><span class="text-green-500 font-black">✓</span><span>подбор репетитора;</span></li>
+<li><span class="text-green-500 font-black">✓</span><span>организация расписания;</span></li>
+<li><span class="text-green-500 font-black">✓</span><span>проведение онлайн-занятия;</span></li>
+<li><span class="text-green-500 font-black">✓</span><span>сопровождение ученика.</span></li>
+</ul>
+</div>
+<p class="mt-6 text-white/70 font-semibold text-[15px] md:text-[16px]">
+Итоговая стоимость зависит от предмета, уровня ученика, преподавателя и выбранного пакета занятий.
+</p>
+<div class="mt-8 pt-6 border-t border-white/10">
+<div class="font-display font-black text-[22px] text-white">Контакты для связи:</div>
+<div class="mt-4 grid md:grid-cols-2 gap-4">
+<a class="p-5 rounded-xl2 bg-white/5 border border-red/20 text-white font-black text-[18px]" href="tel:+79811430618">телефон: +79811430618</a>
+<a class="p-5 rounded-xl2 bg-white/5 border border-red/20 text-white font-black text-[18px]" href="https://t.me/managerRL" rel="noopener" target="_blank">telegram: @managerRL</a>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- LEGAL / PAYMENT / DOCUMENTS -->
+<section class="py-14 md:py-20 bg-gradient-to-b from-[#0A0A0F] to-[#080808]" id="legal">
+  <div class="max-w-[1120px] mx-auto px-4">
+    <div class="text-center mb-10">
+      <h2 class="text-[28px] md:text-[40px] font-display font-black text-white">Юридическая информация, оплата и возврат</h2>
+      <p class="mt-3 text-white/70 font-semibold max-w-3xl mx-auto">Этот раздел нужен, чтобы родителям и платёжному банку было понятно, кто принимает оплату, за что именно, как формируется чек и как оформить возврат.</p>
+    </div>
+    <div class="legal-grid">
+      <div class="legal-card">
+        <h3>Реквизиты</h3>
+        <p><strong>Исполнитель / агент:</strong><br>ИП Гуринович Гордей Валерьевич</p>
+        <p><strong>ИНН:</strong> 110211660372</p>
+        <p><strong>ОГРНИП:</strong> 326330000031166</p>
+        <p><strong>Email:</strong> <a href="mailto:team@redline-shool.ru">team@redline-shool.ru</a></p>
+        <p><strong>Telegram:</strong> <a href="https://t.me/managerRL" target="_blank" rel="noopener">@managerRL</a></p>
+      </div>
+      <div class="legal-card">
+        <h3>Кто оказывает услуги</h3>
+        <p>RED LINE организует обучение: подбирает преподавателя, согласует расписание, принимает оплату, сопровождает процесс и помогает контролировать результат.</p>
+        <p>Непосредственные занятия проводят преподаватели-партнёры, в том числе самозанятые исполнители. Конкретный преподаватель подбирается под цель, уровень и формат обучения ученика.</p>
+      </div>
+      <div class="legal-card">
+        <h3>Оплата и чек</h3>
+        <p>Оплата занятий производится онлайн банковской картой или через СБП с использованием CloudPayments.</p>
+        <p>После успешной оплаты покупателю направляется электронный кассовый чек. Чек направляется на указанные при оплате контактные данные.</p>
+      </div>
+      <div class="legal-card">
+        <h3>Стоимость</h3>
+        <p><strong>Индивидуальные онлайн-занятия — от 1200 ₽ за занятие.</strong></p>
+        <ul>
+          <li>1–9 классы: от 1200 ₽/час;</li>
+          <li>10–11 классы: от 1400 ₽/час;</li>
+          <li>подготовка к ВПР/МЦКО: от 1200 ₽/час;</li>
+          <li>подготовка к экзамену: от 1600 ₽/час.</li>
+        </ul>
+        <p>Итоговая стоимость зависит от предмета, уровня ученика, преподавателя и выбранного пакета занятий.</p>
+      </div>
+      <div class="legal-card">
+        <h3>Возврат</h3>
+        <p>Возврат денежных средств возможен за неоказанные занятия. Для оформления возврата нужно обратиться по email или в Telegram.</p>
+        <p>Обращение рассматривается в течение 10 календарных дней. Возврат производится тем же способом, которым была совершена оплата, если иное не согласовано сторонами.</p>
+      </div>
+      <div class="legal-card">
+        <h3>Документы</h3>
+        <p>Перед оплатой клиент может ознакомиться с публичной офертой и политикой обработки персональных данных.</p>
+        <div class="legal-links">
+          <a class="legal-link" href="#offer">Публичная оферта</a>
+          <a class="legal-link" href="#privacy">Политика ПДн</a>
+          <a class="legal-link" href="#price-list-final">Прайс-лист</a>
+        </div>
       </div>
     </div>
-  </header>
+  </div>
+</section>
 
-  <main>
-    <section class="hero">
-      <div class="wrap grid">
-        <div class="card intro">
-          <span class="chip">Безопасная онлайн-оплата</span>
-          <h1>Оплата онлайн-занятий RED LINE</h1>
-          <p class="lead">Заполните данные для платежа и чека, затем выберите сумму. Оплата откроется в защищённом виджете CloudPayments.</p>
-          <div class="notice">Данные банковской карты не сохраняются на сайте RED LINE. Информация из формы передаётся в CloudPayments Data и понадобится для будущей автоматизации через Make.</div>
-        </div>
-        <aside class="card side">
-          <h2>Перед оплатой</h2>
-          <ul class="side-list">
-            <li><span class="check">✓</span><span>Проверьте имя ученика, предмет и преподавателя.</span></li>
-            <li><span class="check">✓</span><span>Укажите e-mail, на который должен прийти электронный чек.</span></li>
-            <li><span class="check">✓</span><span>Если нужна помощь, напишите менеджеру RED LINE в Telegram.</span></li>
-          </ul>
-          <a class="btn btn-secondary" style="margin-top:22px;width:100%" href="https://t.me/managerRL" target="_blank" rel="noopener">Связаться с менеджером</a>
-        </aside>
-      </div>
-    </section>
-
-    <section class="pay-section">
-      <div class="wrap">
-        <div class="card pay-card">
-          <div class="section-head">
-            <div>
-              <h2>Данные для оплаты</h2>
-              <p>Все обязательные поля нужны для платежа, идентификации заказа и электронного чека.</p>
-            </div>
-          </div>
-
-          <form id="paymentForm" novalidate>
-            <div class="form-grid">
-              <div class="field">
-                <label for="parentName">ФИО родителя</label>
-                <input id="parentName" name="parentName" autocomplete="name" placeholder="Иванова Анна Сергеевна" required>
-              </div>
-              <div class="field">
-                <label for="studentName">Ученик</label>
-                <input id="studentName" name="studentName" autocomplete="off" placeholder="Иван Иванов" required>
-              </div>
-              <div class="field">
-                <label for="subject">Предмет</label>
-                <input id="subject" name="subject" autocomplete="off" placeholder="Математика" required>
-              </div>
-              <div class="field">
-                <label for="tutorName">Имя репетитора</label>
-                <input id="tutorName" name="tutorName" autocomplete="off" placeholder="Мария" required>
-              </div>
-              <div class="field">
-                <label for="parentEmail">Email</label>
-                <input id="parentEmail" name="parentEmail" type="email" autocomplete="email" placeholder="name@example.com" required>
-              </div>
-              <div class="field">
-                <label for="parentPhone">Телефон</label>
-                <input id="parentPhone" name="parentPhone" type="tel" autocomplete="tel" placeholder="+7 981 143 0618" required>
-              </div>
-            </div>
-            <div class="field">
-              <label for="comment">Комментарий</label>
-              <textarea id="comment" name="comment" placeholder="Например: оплата за 2 занятия по математике"></textarea>
-            </div>
-          </form>
-
-          <h2 class="amounts-title">Выберите сумму оплаты</h2>
-          <div class="amount-grid" id="amountGrid" aria-label="Суммы оплаты"></div>
-
-          <div class="message" id="paymentMessage" role="status" aria-live="polite"></div>
-          <div class="fallback-payment" id="fallbackPayment" aria-live="polite"></div>
-
-          <p class="fineprint">
-            Нажимая сумму, вы переходите к оплате и соглашаетесь с
-            <a href="index.html#offer">публичной офертой</a> и
-            <a href="index.html#privacy">политикой обработки персональных данных</a>.
-          </p>
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <footer>
-    <div class="wrap">
-      <div class="footer-inner">
-        <div>© <span id="year">2026</span> RED LINE</div>
-        <div><a href="mailto:info@redline-tutors.ru">info@redline-tutors.ru</a> · <a href="tel:+79811430618">+7 981 143 0618</a></div>
-      </div>
+<section class="py-14 md:py-20" id="offer">
+  <div class="max-w-[1120px] mx-auto px-4">
+    <div class="doc-block">
+      <h3>Публичная оферта на оказание услуг по организации онлайн-занятий</h3>
+      <p><strong>Редакция от 30.04.2026.</strong> Настоящий документ является публичной офертой ИП Гуриновича Гордея Валерьевича, ИНН 110211660372, ОГРНИП 326330000031166, далее — «Исполнитель» или «RED LINE», адресованной физическим лицам — родителям, законным представителям или совершеннолетним ученикам, далее — «Заказчик».</p>
+      <h4>1. Предмет оферты</h4>
+      <p>RED LINE оказывает услуги по организации индивидуальных онлайн-занятий: принимает заявку, проводит первичную диагностику, подбирает преподавателя, согласует расписание, организует коммуникацию, оплату и сопровождение обучения.</p>
+      <p>Непосредственные занятия проводят преподаватели-партнёры, в том числе самозанятые исполнители. RED LINE может выступать агентом/платформой, организующей расчёты и взаимодействие между Заказчиком и преподавателем.</p>
+      <h4>2. Акцепт оферты</h4>
+      <p>Акцептом оферты считается совершение Заказчиком одного из действий: отправка заявки на сайте, запись на диагностику, оплата занятий, начало пользования услугами RED LINE или иное подтверждение согласия с условиями оферты.</p>
+      <h4>3. Формат занятий</h4>
+      <p>Занятия проводятся дистанционно с использованием онлайн-сервисов связи. Продолжительность, предмет, расписание и преподаватель согласуются индивидуально с Заказчиком.</p>
+      <h4>4. Стоимость и порядок оплаты</h4>
+      <p>Стоимость индивидуальных онлайн-занятий начинается от 1200 ₽ за занятие. Итоговая стоимость зависит от предмета, класса, уровня ученика, преподавателя, цели обучения и выбранного пакета занятий.</p>
+      <p>Оплата производится онлайн банковской картой или через СБП с использованием CloudPayments. После оплаты Заказчику направляется электронный кассовый чек.</p>
+      <h4>5. Права и обязанности сторон</h4>
+      <p>RED LINE обязуется организовать процесс обучения, подобрать преподавателя, передать Заказчику информацию о занятиях и сопровождать процесс. Заказчик обязуется своевременно предоставлять корректные контактные данные, оплачивать занятия и предупреждать об отмене/переносе занятия заранее.</p>
+      <h4>6. Перенос и отмена занятий</h4>
+      <p>Условия переноса и отмены занятия согласуются с менеджером RED LINE. Если ученик не может присутствовать на занятии, Заказчику рекомендуется предупредить об этом заранее через согласованный канал связи.</p>
+      <h4>7. Возврат денежных средств</h4>
+      <p>Возврат возможен за неоказанные занятия. Для оформления возврата Заказчик направляет обращение на email team@redline-shool.ru или в Telegram @managerRL. Обращение рассматривается в течение 10 календарных дней. Возврат производится тем же способом, которым была совершена оплата, если иное не согласовано сторонами.</p>
+      <h4>8. Ответственность</h4>
+      <p>RED LINE отвечает за организацию процесса, коммуникацию, подбор преподавателя и сопровождение обучения. Заказчик понимает, что образовательный результат зависит от исходного уровня ученика, регулярности занятий, выполнения заданий и иных индивидуальных факторов.</p>
+      <h4>9. Персональные данные</h4>
+      <p>Направляя заявку или оплачивая занятия, Заказчик даёт согласие на обработку персональных данных в соответствии с политикой обработки персональных данных, размещённой на настоящем сайте.</p>
+      <h4>10. Контакты</h4>
+      <p>ИП Гуринович Гордей Валерьевич, ИНН 110211660372, ОГРНИП 326330000031166. Email: team@redline-shool.ru. Telegram: @managerRL.</p>
     </div>
-  </footer>
+  </div>
+</section>
 
-  <script src="https://widget.cloudpayments.ru/bundles/cloudpayments.js"></script>
-  <script>
-    const CLOUDPAYMENTS_PUBLIC_ID = "pk_12b05b775c46d16cdcfc19ca64510";
-    const ALBATO_WEBHOOK_URL = "";
+<section class="py-14 md:py-20" id="privacy">
+  <div class="max-w-[1120px] mx-auto px-4">
+    <div class="doc-block">
+      <h3>Политика обработки персональных данных</h3>
+      <p><strong>Редакция от 30.04.2026.</strong> Настоящая политика определяет порядок обработки персональных данных ИП Гуриновичем Гордеем Валерьевичем, ИНН 110211660372, ОГРНИП 326330000031166, далее — «Оператор».</p>
+      <h4>1. Какие данные обрабатываются</h4>
+      <p>Оператор может обрабатывать: имя родителя/ученика, номер телефона, email, Telegram-аккаунт, класс, предмет, цель обучения, комментарии из заявки, сведения об оплате и иную информацию, которую пользователь добровольно передаёт через сайт, мессенджеры или иные каналы связи.</p>
+      <h4>2. Цели обработки</h4>
+      <ul>
+        <li>обработка заявки и связь с пользователем;</li>
+        <li>проведение бесплатной диагностики;</li>
+        <li>подбор преподавателя и организация обучения;</li>
+        <li>согласование расписания и сопровождение занятий;</li>
+        <li>приём оплаты, направление электронных чеков и оформление возвратов;</li>
+        <li>исполнение требований законодательства РФ.</li>
+      </ul>
+      <h4>3. Правовые основания</h4>
+      <p>Обработка осуществляется на основании согласия пользователя, необходимости исполнения договора/оферты, а также требований законодательства РФ.</p>
+      <h4>4. Передача данных третьим лицам</h4>
+      <p>Данные могут передаваться преподавателям-партнёрам для организации занятий, платёжным и кассовым сервисам для приёма оплаты и формирования чеков, а также иным лицам, если это необходимо для исполнения обязательств или требуется законом.</p>
+      <h4>5. Хранение и защита данных</h4>
+      <p>Оператор принимает разумные организационные и технические меры для защиты персональных данных от неправомерного доступа, изменения, распространения или уничтожения.</p>
+      <h4>6. Права пользователя</h4>
+      <p>Пользователь вправе запросить информацию об обработке своих персональных данных, потребовать уточнения, блокирования или удаления данных, а также отозвать согласие на обработку, направив обращение на email team@redline-shool.ru или в Telegram @managerRL.</p>
+      <h4>7. Контакты оператора</h4>
+      <p>ИП Гуринович Гордей Валерьевич. ИНН 110211660372. ОГРНИП 326330000031166. Email: team@redline-shool.ru. Telegram: @managerRL.</p>
+    </div>
+  </div>
+</section>
 
-    // Редактировать доступные суммы оплаты здесь.
-    const paymentAmounts = [
-      10,
-      ...Array.from({ length: 43 }, (_, index) => 800 + index * 100)
-    ];
-
-    const paymentLinksByAmount = {
-      10: "https://c.cloudpayments.ru/payments/d29faa11525145f6aff9b08ece74f56f",
-      800: "https://c.cloudpayments.ru/payments/1e0d6de05605471b9f768b4bc1cefdc7",
-      900: "https://c.cloudpayments.ru/payments/790da1a573824dad8b8291fb21477b1f",
-      1000: "https://c.cloudpayments.ru/payments/e1fd93b9c8c24635a1c68f64a7fb6023",
-      1100: "https://c.cloudpayments.ru/payments/3c9634570a454dc2a4c9da57edec9cbc",
-      1200: "https://c.cloudpayments.ru/payments/aa8e9fc96a194918a66ffbe1d7dd3aae",
-      1300: "https://c.cloudpayments.ru/payments/74dc77c5c33b48d5bf07bfd76cc05e8f",
-      1400: "https://c.cloudpayments.ru/payments/31df1fff732945daafd8a82337ac73a7",
-      1500: "https://c.cloudpayments.ru/payments/5dc158bca29e4b2ba44996f30f205094",
-      1600: "https://c.cloudpayments.ru/payments/2f1224c804fb4b2ebcffd190bf8d811c",
-      1700: "https://c.cloudpayments.ru/payments/db72fe08d6e4433eb7a753318789503f",
-      1800: "https://c.cloudpayments.ru/payments/e10d85f9ee7c41059828808ff63e45b9",
-      1900: "https://c.cloudpayments.ru/payments/920175659bec4b39b3fc44f03674bd11",
-      2000: "https://c.cloudpayments.ru/payments/c6f564f7933749cc84309c38a5cffd26",
-      2100: "https://c.cloudpayments.ru/payments/2f03321dd6674bd6a47afea564965981",
-      2200: "https://c.cloudpayments.ru/payments/5152f331b0514e99a0f85437d6c8c8e9",
-      2300: "https://c.cloudpayments.ru/payments/5be07a6af2f14957837f02486145708e",
-      2400: "https://c.cloudpayments.ru/payments/2c004298f34d45e187d0c4292ce6988a",
-      2500: "https://c.cloudpayments.ru/payments/20a155cec1bb4261806f548eaa520a4f",
-      2600: "https://c.cloudpayments.ru/payments/f14f19082b9944ca896b8c2517349dae",
-      2700: "https://c.cloudpayments.ru/payments/09573240c0654c18a1aba02d42d9270d",
-      2800: "https://c.cloudpayments.ru/payments/d4c141b57e274f8f812eae03c7b74cab",
-      2900: "https://c.cloudpayments.ru/payments/bb782e37f80146ec998c7a5ffb2edd6e",
-      3000: "https://c.cloudpayments.ru/payments/e02af20ad2cb4510a903b711205bdd18",
-      3100: "https://c.cloudpayments.ru/payments/f73f9de991b444d8af6e94c2a3e1ca62",
-      3200: "https://c.cloudpayments.ru/payments/2829d5fa64154c1e9cfb24790f097069",
-      3300: "https://c.cloudpayments.ru/payments/e4b1d276282e4c78ac22ddeb6be221f9",
-      3400: "https://c.cloudpayments.ru/payments/33ef0a3d0e9442c68b05ac8777702df7",
-      3500: "https://c.cloudpayments.ru/payments/1161333bf25842cd9b90aa82ba34e851",
-      3600: "https://c.cloudpayments.ru/payments/7a0edfc16e6245f4bca8938f8fe2e1b8",
-      3700: "https://c.cloudpayments.ru/payments/c353135592604035a299d51e9584c1d6",
-      3800: "https://c.cloudpayments.ru/payments/2eb7fdcba8f24f1eb477b654810688b3",
-      3900: "https://c.cloudpayments.ru/payments/4111b597878946eabe04971c13bee43b",
-      4000: "https://c.cloudpayments.ru/payments/d79de962f7ea49f18469810ceab1f091",
-      4100: "https://c.cloudpayments.ru/payments/8c5a18cd1ab549daabe07b445015cfe3",
-      4200: "https://c.cloudpayments.ru/payments/049741f1709842ab8726a44608bef8d2",
-      4300: "https://c.cloudpayments.ru/payments/edfc6b2c12694f749f4786b7c8b5a2cc",
-      4400: "https://c.cloudpayments.ru/payments/dd5783c4f1a6452f8acaf57f3397770f",
-      4500: "https://c.cloudpayments.ru/payments/0a7d1766c59c449fbbe477bc1d17b9f4",
-      4600: "https://c.cloudpayments.ru/payments/02a40e187ebf42d6bf1042d9dfae6fb5",
-      4700: "https://c.cloudpayments.ru/payments/60217a68c854490ea2d131b7b34d0c33",
-      4800: "https://c.cloudpayments.ru/payments/7c7b3d86477f47fa9a9accaacd7a0131",
-      4900: "https://c.cloudpayments.ru/payments/13fcacb69d5d46089b8287e3a537196b",
-      5000: "https://c.cloudpayments.ru/payments/f2ccbbb9fc7f47fa8ee2e642f4de3900"
-    };
-
-    const amountGrid = document.getElementById("amountGrid");
-    const paymentForm = document.getElementById("paymentForm");
-    const paymentMessage = document.getElementById("paymentMessage");
-    const fallbackPayment = document.getElementById("fallbackPayment");
+</main>
+<script>
+    // ==========================================
+    // НАСТРОЙКА - ВСТАВЬТЕ СЮДА ВАШ URL
+    // ==========================================
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz60Y5CbPu4q2ra5VO2rDtvQ-d9UrPbk72kNTU4ZR6xsdEcDKOOoNukrjdVBoQXJmps/exec";
+    
+    // ==========================================
+    // ОСНОВНОЙ КОД
+    // ==========================================
     document.getElementById("year").textContent = new Date().getFullYear();
 
-    paymentAmounts.forEach((amount) => {
-      const button = document.createElement("button");
-      button.className = "amount-btn";
-      button.type = "button";
-      button.textContent = `${amount.toLocaleString("ru-RU")} ₽`;
-      button.addEventListener("click", () => startPayment(amount));
-      amountGrid.appendChild(button);
-    });
+    const form = document.getElementById("leadForm");
+    const submitBtn = document.getElementById("submitBtn");
+    const btnText = document.getElementById("btnText");
+    const formMessage = document.getElementById("formMessage");
 
-    function startPayment(selectedAmount) {
-      const formData = getFormData();
-      const validationError = validateFormData(formData);
+    form.addEventListener("submit", async function(e) {
+      e.preventDefault();
 
-      if (validationError) {
-        hideFallbackLink();
-        showError(validationError);
-        return;
-      }
+      submitBtn.disabled = true;
+      btnText.textContent = "Отправка...";
+      formMessage.innerHTML = "";
 
-      showFallbackLink(selectedAmount);
-
-      if (!window.cp || !window.cp.CloudPayments) {
-        showError("Платёжный модуль CloudPayments не загрузился. Проверьте интернет-соединение и попробуйте ещё раз.");
-        return;
-      }
-
-      const {
-        parentName,
-        studentName,
-        subject,
-        tutorName,
-        parentEmail,
-        parentPhone,
-        comment
-      } = formData;
-
-      const orderId = createOrderId();
-      const payerId = parentPhone;
-      const receiptCustomerInfo = [
-        `Родитель: ${parentName}`,
-        `Ученик: ${studentName}`,
-        `Предмет: ${subject}`,
-        `Репетитор: ${tutorName}`,
-        `Комментарий: ${comment || "Без комментария"}`
-      ].join("; ");
-
-      const receipt = {
-        Items: [
-          {
-            label: "Оплата онлайн-занятий RED LINE",
-            price: selectedAmount,
-            quantity: 1,
-            amount: selectedAmount,
-            vat: null,
-            method: 4,
-            object: 4,
-            measurementUnit: "усл."
-          }
-        ],
-        taxationSystem: 1,
-        email: parentEmail,
-        phone: parentPhone,
-        customerInfo: receiptCustomerInfo,
-        isBso: false,
-        amounts: {
-          electronic: selectedAmount,
-          advancePayment: 0,
-          credit: 0,
-          provision: 0
-        },
-        calculationPlace: "https://redline-school.github.io/RedLine/"
-      };
-
-      const paymentData = {
-        parent_name: parentName,
-        student_name: studentName,
-        subject: subject,
-        tutor_name: tutorName,
-        comment: comment,
-        parent_phone: parentPhone,
-        parent_email: parentEmail,
-        order_id: orderId,
-        invoice_id: orderId,
-        amount: selectedAmount,
-        account_id: payerId,
-        payer_id: payerId,
-        source: "redline_payment_page",
-        name: parentName,
-        phone: parentPhone,
-
-        cloudPayments: {
-          customerReceipt: receipt
-        }
-      };
-
-      const widget = new cp.CloudPayments();
-
-      widget.pay("charge", {
-        publicId: CLOUDPAYMENTS_PUBLIC_ID,
-        description: "Оплата онлайн-занятий RED LINE",
-        amount: selectedAmount,
-        currency: "RUB",
-        accountId: payerId,
-        invoiceId: orderId,
-        email: parentEmail,
-        requireEmail: true,
-        skin: "modern",
-        data: paymentData
-      }, {
-        onSuccess: function () {
-          sendPaymentToAlbato({
-            parent_name: parentName,
-            student_name: studentName,
-            subject: subject,
-            tutor_name: tutorName,
-            comment: comment,
-            parent_phone: parentPhone,
-            parent_email: parentEmail,
-            order_id: orderId,
-            invoice_id: orderId,
-            amount: selectedAmount,
-            account_id: payerId,
-            payer_id: payerId,
-            source: "redline_payment_page",
-            paid_at: new Date().toISOString()
-          });
-          showSuccess(orderId, selectedAmount);
-        },
-        onFail: function (reason) {
-          console.warn("CloudPayments fail:", reason);
-          showError();
-        },
-        onComplete: function (paymentResult, options) {
-          console.log("CloudPayments complete:", paymentResult, options);
-        }
+      const payload = new URLSearchParams({
+        parent_name: document.getElementById("name").value.trim(),
+        phone: document.getElementById("phone").value.trim(),
+        grade: document.getElementById("grade").value.trim(),
+        subject: document.getElementById("subject").value.trim(),
+        goal: document.getElementById("comment").value.trim()
       });
-    }
 
-    function sendPaymentToAlbato(payload) {
-      if (!ALBATO_WEBHOOK_URL) return;
-
-      const body = new URLSearchParams(payload).toString();
-
-      if (navigator.sendBeacon) {
-        const blob = new Blob([body], {
-          type: "application/x-www-form-urlencoded;charset=UTF-8"
+      try {
+        await fetch(GOOGLE_SCRIPT_URL, {
+          method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8" },
+          body: payload.toString()
         });
 
-        if (navigator.sendBeacon(ALBATO_WEBHOOK_URL, blob)) {
-          return;
-        }
+        showMessage("✓ Заявка отправлена! Мы свяжемся с вами в ближайшее время.", "success");
+        form.reset();
+      } catch (error) {
+        showMessage("Ошибка отправки. Напишите нам в Telegram.", "error");
       }
 
-      fetch(ALBATO_WEBHOOK_URL, {
-        method: "POST",
-        mode: "no-cors",
-        keepalive: true,
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8"
-        },
-        body: body
-      }).catch((error) => {
-        console.warn("Albato webhook error:", error);
-      });
+      submitBtn.disabled = false;
+      btnText.textContent = "Пройти бесплатную диагностику прямо сейчас";
+    });
+
+    function showMessage(text, type) {
+      formMessage.innerHTML = `<div class="form-message form-${type}">${text}</div>`;
     }
 
-    function getFormData() {
-      return {
-        parentName: document.getElementById("parentName").value.trim(),
-        studentName: document.getElementById("studentName").value.trim(),
-        subject: document.getElementById("subject").value.trim(),
-        tutorName: document.getElementById("tutorName").value.trim(),
-        parentEmail: document.getElementById("parentEmail").value.trim(),
-        parentPhone: document.getElementById("parentPhone").value.trim(),
-        comment: document.getElementById("comment").value.trim()
-      };
-    }
 
-    function validateFormData(data) {
-      const requiredFields = [
-        ["parentName", "Заполните ФИО родителя."],
-        ["studentName", "Заполните имя ученика."],
-        ["subject", "Укажите предмет."],
-        ["tutorName", "Укажите имя репетитора."],
-        ["parentEmail", "Укажите email."],
-        ["parentPhone", "Укажите телефон."]
-      ];
 
-      for (const [field, message] of requiredFields) {
-        if (!data[field]) {
-          focusField(field);
-          return message;
-        }
-      }
-
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.parentEmail)) {
-        focusField("parentEmail");
-        return "Проверьте email: он должен быть в формате name@example.com.";
-      }
-
-      const phoneDigits = data.parentPhone.replace(/\D/g, "");
-      if (phoneDigits.length < 10) {
-        focusField("parentPhone");
-        return "Проверьте телефон: укажите не меньше 10 цифр.";
-      }
-
-      return "";
-    }
-
-    function focusField(fieldName) {
-      const fieldMap = {
-        parentName: "parentName",
-        studentName: "studentName",
-        subject: "subject",
-        tutorName: "tutorName",
-        parentEmail: "parentEmail",
-        parentPhone: "parentPhone"
-      };
-      const field = document.getElementById(fieldMap[fieldName]);
-      if (field) field.focus();
-    }
-
-    function createOrderId() {
-      const now = new Date();
-      const pad = (value) => String(value).padStart(2, "0");
-      const date = [
-        now.getFullYear(),
-        pad(now.getMonth() + 1),
-        pad(now.getDate())
-      ].join("");
-      const time = [
-        pad(now.getHours()),
-        pad(now.getMinutes()),
-        pad(now.getSeconds())
-      ].join("");
-      const random = Math.floor(1000 + Math.random() * 9000);
-
-      return `RL-${date}-${time}-${random}`;
-    }
-
-    function showSuccess(orderId, selectedAmount) {
-      paymentForm.reset();
-      hideFallbackLink();
-      paymentMessage.className = "message success is-visible";
-      paymentMessage.innerHTML = `
-        Оплата прошла успешно. Электронный чек будет отправлен на указанный e-mail.
-        <strong>Сумма: ${selectedAmount.toLocaleString("ru-RU")} ₽</strong>
-        <strong>Order ID: ${orderId}</strong>
-      `;
-      paymentMessage.scrollIntoView({ behavior: "smooth", block: "center" });
-    }
-
-    function showError(reason) {
-      paymentMessage.className = "message error is-visible";
-      paymentMessage.textContent = reason || "Оплата не прошла. Попробуйте ещё раз или свяжитесь с менеджером RED LINE.";
-      paymentMessage.scrollIntoView({ behavior: "smooth", block: "center" });
-    }
-
-    function showFallbackLink(selectedAmount) {
-      const paymentLink = paymentLinksByAmount[selectedAmount];
-
-      if (!paymentLink) {
-        hideFallbackLink();
+    // Lazy load review videos only when user gets close to them
+    const lazyVideos = document.querySelectorAll('video');
+    const loadVideo = (video) => {
+      if (video.dataset.loaded === 'true') return;
+      const source = video.querySelector('source[data-src]');
+      if (!source) {
+        video.dataset.loaded = 'true';
         return;
       }
+      source.src = source.dataset.src;
+      source.removeAttribute('data-src');
+      video.load();
+      video.dataset.loaded = 'true';
+    };
 
-      fallbackPayment.className = "fallback-payment is-visible";
-      fallbackPayment.innerHTML = `
-        <p>Если виджет не открылся, можно оплатить ${selectedAmount.toLocaleString("ru-RU")} ₽ по прямой ссылке CloudPayments.</p>
-        <a class="btn btn-pay" href="${paymentLink}" target="_blank" rel="noopener">Оплатить по прямой ссылке</a>
-      `;
-    }
+    const videoObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          loadVideo(entry.target);
+          videoObserver.unobserve(entry.target);
+        }
+      });
+    }, { rootMargin: '280px 0px', threshold: 0.01 });
 
-    function hideFallbackLink() {
-      fallbackPayment.className = "fallback-payment";
-      fallbackPayment.innerHTML = "";
-    }
+    lazyVideos.forEach(video => {
+      videoObserver.observe(video);
+      video.addEventListener('play', () => loadVideo(video), { once: true });
+      video.addEventListener('touchstart', () => loadVideo(video), { once: true, passive: true });
+      video.addEventListener('click', () => loadVideo(video), { once: true });
+    });
+
+    // Chart animation
+    const chartSection = document.getElementById('results');
+    const chartLine = document.getElementById('chartLine');
+    const chartArea = document.getElementById('chartArea');
+    const chartPoints = document.querySelectorAll('.chart-point');
+    
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          chartLine.style.animation = 'drawLine 2s ease-out forwards';
+          chartArea.style.animation = 'fadeIn 1s ease-out forwards';
+          chartArea.style.animationDelay = '1s';
+          chartPoints.forEach(point => {
+            point.style.animationPlayState = 'running';
+          });
+        }
+      });
+    }, { threshold: 0.3 });
+
+    observer.observe(chartSection);
   </script>
-</body>
-</html>
+
+
+</body></html>
