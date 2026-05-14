@@ -335,6 +335,7 @@
   <script src="https://widget.cloudpayments.ru/bundles/cloudpayments.js"></script>
   <script>
     const CLOUDPAYMENTS_PUBLIC_ID = "pk_12b05b775c46d16cdcfc19ca64510";
+    const ALBATO_WEBHOOK_URL = "";
 
     // Редактировать доступные суммы оплаты здесь.
     const paymentAmounts = [
@@ -505,6 +506,22 @@
         data: paymentData
       }, {
         onSuccess: function () {
+          sendPaymentToAlbato({
+            parent_name: parentName,
+            student_name: studentName,
+            subject: subject,
+            tutor_name: tutorName,
+            comment: comment,
+            parent_phone: parentPhone,
+            parent_email: parentEmail,
+            order_id: orderId,
+            invoice_id: orderId,
+            amount: selectedAmount,
+            account_id: payerId,
+            payer_id: payerId,
+            source: "redline_payment_page",
+            paid_at: new Date().toISOString()
+          });
           showSuccess(orderId, selectedAmount);
         },
         onFail: function (reason) {
@@ -514,6 +531,34 @@
         onComplete: function (paymentResult, options) {
           console.log("CloudPayments complete:", paymentResult, options);
         }
+      });
+    }
+
+    function sendPaymentToAlbato(payload) {
+      if (!ALBATO_WEBHOOK_URL) return;
+
+      const body = new URLSearchParams(payload).toString();
+
+      if (navigator.sendBeacon) {
+        const blob = new Blob([body], {
+          type: "application/x-www-form-urlencoded;charset=UTF-8"
+        });
+
+        if (navigator.sendBeacon(ALBATO_WEBHOOK_URL, blob)) {
+          return;
+        }
+      }
+
+      fetch(ALBATO_WEBHOOK_URL, {
+        method: "POST",
+        mode: "no-cors",
+        keepalive: true,
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8"
+        },
+        body: body
+      }).catch((error) => {
+        console.warn("Albato webhook error:", error);
       });
     }
 
