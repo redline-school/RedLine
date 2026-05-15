@@ -1871,24 +1871,21 @@ summary::-webkit-details-marker{display:none;}
         const button = document.getElementById("sendAlbatoIndexTest");
         const now = new Date();
         const orderId = `INDEX-TEST-${createAlbatoTestOrderId(now)}`;
-        const payload = {
-          parent_name: "Тестовый родитель",
-          student_name: "Тестовый ученик",
+        const payload = createAlbatoTestPayload({
+          parentName: "Тестовый родитель",
+          studentName: "Тестовый ученик",
           subject: "Математика",
-          tutor_name: "Тестовый репетитор",
+          tutorName: "Тестовый репетитор",
           comment: "Тестовая отправка с index.html без оплаты",
-          parent_phone: "+79990000000",
-          parent_email: "test@example.com",
-          order_id: orderId,
-          invoice_id: orderId,
+          parentPhone: "+79990000000",
+          parentEmail: "test@example.com",
+          orderId,
           amount: 10,
-          account_id: "+79990000000",
-          payer_id: "+79990000000",
           source: "redline_index_test_panel",
           status: "test_paid",
-          transaction_id: `INDEX-${now.getTime()}`,
-          paid_at: now.toISOString()
-        };
+          transactionId: `INDEX-${now.getTime()}`,
+          paidAt: now
+        });
 
         button.disabled = true;
         result.textContent = "Отправляем...";
@@ -1911,6 +1908,79 @@ summary::-webkit-details-marker{display:none;}
         pad(date.getMinutes()),
         pad(date.getSeconds())
       ].join("");
+    }
+
+    function createAlbatoTestPayload({
+      parentName,
+      studentName,
+      subject,
+      tutorName,
+      comment,
+      parentPhone,
+      parentEmail,
+      orderId,
+      amount,
+      source,
+      status,
+      transactionId,
+      paidAt
+    }) {
+      const paidDate = paidAt instanceof Date ? paidAt : new Date(paidAt);
+      const paidAtIso = paidDate.toISOString();
+      const paidAtRu = paidDate.toLocaleString("ru-RU");
+      const registrarPercent = 40;
+      const registrarAmount = Math.round(Number(amount) * registrarPercent) / 100;
+      const cloudPaymentsCommission = Math.round(Number(amount) * 3.9) / 100;
+      const netToBank = Math.round((Number(amount) - cloudPaymentsCommission) * 100) / 100;
+      const approximateUsn = Math.round(Number(amount) * 6) / 100;
+
+      return {
+        parent_name: parentName,
+        student_name: studentName,
+        subject: subject,
+        tutor_name: tutorName,
+        comment: comment,
+        parent_phone: parentPhone,
+        parent_email: parentEmail,
+        order_id: orderId,
+        invoice_id: orderId,
+        amount: amount,
+        account_id: parentPhone,
+        payer_id: parentPhone,
+        source: source,
+        status: status,
+        transaction_id: transactionId || "",
+        paid_at: paidAtIso,
+
+        payment_id: orderId,
+        payment_date: paidAtRu,
+        payment_source: source,
+        recipient_account: "р/с ИП",
+        payment_status: status,
+        cloudpayments: "CloudPayments",
+        order_invoice_id: orderId,
+        parent_fio: parentName,
+        student_parent: parentName,
+        tutor_id: "",
+        client_payment_amount: amount,
+        lessons_count: 1,
+        discount_commission: 0,
+        registrar_percent: `${registrarPercent}%`,
+        registrar_amount: registrarAmount,
+        writeoff_date: "",
+        cloudpayments_commission: cloudPaymentsCommission,
+        net_to_bank_account: netToBank,
+        bank_receipt_date: "",
+        amount_rub: amount,
+        retention_fact: "Да",
+        student_discount: "Нет",
+        tutor_receipt: "",
+        tutor_payout_status: "Не выплачено",
+        accrued_advance_usn: 0,
+        approximate_usn_6: approximateUsn,
+        make_data_paidat: paidAtIso,
+        history: "ok"
+      };
     }
 
     function sendAlbatoWebhook(payload) {
