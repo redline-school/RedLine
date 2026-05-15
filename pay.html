@@ -508,6 +508,33 @@
       };
 
       const widget = new cp.CloudPayments();
+      let albatoPaymentSent = false;
+
+      function sendPaidAlbatoWebhook(transactionId, trigger) {
+        if (albatoPaymentSent) return Promise.resolve(false);
+        albatoPaymentSent = true;
+
+        const payload = createAlbatoPaymentPayload({
+          parentName,
+          studentName,
+          subject,
+          tutorName,
+          comment,
+          parentPhone,
+          parentEmail,
+          orderId,
+          amount: selectedAmount,
+          source: `redline_payment_page_${trigger}`,
+          status: "paid",
+          transactionId,
+          paidAt: new Date()
+        });
+
+        return sendPaymentToAlbato(payload).then((sent) => {
+          console.log(`Albato webhook after payment (${trigger}):`, sent ? "accepted" : "fallback/failed");
+          return sent;
+        });
+      }
 
       widget.pay("charge", {
         publicId: CLOUDPAYMENTS_PUBLIC_ID,
@@ -522,31 +549,8 @@
         data: paymentData
       }, {
         onSuccess: function (options) {
-          const transactionId = options && (
-            options.transactionId ||
-            options.TransactionId ||
-            options.paymentId ||
-            options.PaymentId ||
-            ""
-          );
-
-          sendPaymentToAlbato(createAlbatoPaymentPayload({
-            parentName,
-            studentName,
-            subject,
-            tutorName,
-            comment,
-            parentPhone,
-            parentEmail,
-            orderId,
-            amount: selectedAmount,
-            source: "redline_payment_page",
-            status: "paid",
-            transactionId,
-            paidAt: new Date()
-          })).then((sent) => {
-            console.log("Albato webhook after payment:", sent ? "accepted" : "fallback/failed");
-          });
+          console.log("CloudPayments success:", options);
+          sendPaidAlbatoWebhook(getCloudPaymentsTransactionId(options), "success");
           showSuccess(orderId, selectedAmount);
         },
         onFail: function (reason) {
@@ -555,8 +559,43 @@
         },
         onComplete: function (paymentResult, options) {
           console.log("CloudPayments complete:", paymentResult, options);
+          if (isCloudPaymentsSuccess(paymentResult)) {
+            sendPaidAlbatoWebhook(getCloudPaymentsTransactionId(paymentResult, options), "complete");
+          }
         }
       });
+    }
+
+    function getCloudPaymentsTransactionId(...sources) {
+      for (const source of sources) {
+        if (!source || typeof source !== "object") continue;
+
+        const transactionId = (
+          source.transactionId ||
+          source.TransactionId ||
+          source.paymentId ||
+          source.PaymentId ||
+          source.invoiceId ||
+          source.InvoiceId ||
+          ""
+        );
+
+        if (transactionId) return String(transactionId);
+      }
+
+      return "";
+    }
+
+    function isCloudPaymentsSuccess(paymentResult) {
+      if (!paymentResult || typeof paymentResult !== "object") return false;
+
+      return (
+        paymentResult.Success === true ||
+        paymentResult.success === true ||
+        paymentResult.Status === "Completed" ||
+        paymentResult.status === "success" ||
+        paymentResult.status === "Completed"
+      );
     }
 
     function sendPaymentToAlbato(payload) {
